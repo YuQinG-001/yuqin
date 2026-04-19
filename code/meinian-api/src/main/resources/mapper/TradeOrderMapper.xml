@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuqin.meinian.api.db.mapper.TradeOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.TradeOrderEntity">
+            <id property="orderId" column="order_id" />
+            <result property="outTradeNo" column="out_trade_no" />
+            <result property="customerId" column="customer_id" />
+            <result property="goodsId" column="goods_id" />
+            <result property="goodsTitle" column="goods_title" />
+            <result property="goodsPrice" column="goods_price" />
+            <result property="goodsImage" column="goods_image" />
+            <result property="goodsDescription" column="goods_description" />
+            <result property="quantity" column="quantity" />
+            <result property="totalAmount" column="total_amount" />
+            <result property="transactionId" column="transaction_id" />
+            <result property="orderStatus" column="order_status" />
+            <result property="snapshotId" column="snapshot_id" />
+            <result property="outRefundNo" column="out_refund_no" />
+            <result property="createTime" column="create_time" />
+            <result property="createDate" column="create_date" />
+            <result property="refundTime" column="refund_time" />
+            <result property="refundDate" column="refund_date" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        order_id,out_trade_no,customer_id,goods_id,goods_title,goods_price,
+        goods_image,goods_description,quantity,total_amount,transaction_id,
+        order_status,snapshot_id,out_refund_no,create_time,create_date,
+        refund_time,refund_date
+    </sql>
+</mapper>

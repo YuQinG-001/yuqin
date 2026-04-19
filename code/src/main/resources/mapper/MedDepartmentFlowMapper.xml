@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuqin.meinian.api.db.mapper.MedDepartmentFlowMapper">
+
+    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.MedDepartmentFlowEntity">
+            <id property="id" column="id" />
+            <result property="departmentName" column="department_name" />
+            <result property="currentCount" column="current_count" />
+            <result property="maxCapacity" column="max_capacity" />
+            <result property="weight" column="weight" />
+            <result property="priority" column="priority" />
+            <result property="beaconUuid" column="beacon_uuid" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,department_name,current_count,max_capacity,weight,priority,
+        beacon_uuid
+    </sql>
+</mapper>

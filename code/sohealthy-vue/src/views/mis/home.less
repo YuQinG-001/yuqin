@@ -1,0 +1,120 @@
+// 导入全局样式变量
+@import url('../style.less');
+
+.home {
+    display: flex; /* 使用弹性布局 */
+    justify-content: center; /* 水平居中对齐 */
+    padding-top: 160px; /* 顶部内边距保持不变，确保留白 */
+    user-select: none; /* 禁止选中文字，防止点击动效时误触选中 */
+    -webkit-user-select: none; /* 兼容 WebKit 内核浏览器 (如 Safari) */
+
+    .left {
+        margin-right: 100px; /* 增大间距，拉开左右距离 */
+
+        h2 {
+            font-size: 48px; /* 字体加大，更醒目 */
+            color: @font-color-34; /* 文字颜色使用变量 */
+            font-weight: bold; /* 粗体字重 */
+            letter-spacing: 2px; /* 字符间距微调 */
+            margin-top: 0; /* 优化顶部间距 */
+        }
+
+        .desc {
+            border-left: solid 6px @bg-color-24; /* 边框加粗一点 */
+            padding-left: 20px; /* 左侧内边距加大 */
+            margin-top: 20px; /* 上方留白 */
+
+            p {
+                font-size: 32px; /* 描述文字大幅加大 */
+                font-weight: bold; /* 粗体字重 */
+                color: @font-color-35; /* 文字颜色使用变量 */
+                letter-spacing: 1px; /* 字符间距 */
+                margin: 10px 0; /* 行间距 */
+            }
+        }
+
+        .bottom {
+            display: flex; /* 使用弹性布局 */
+            justify-content: space-between; /* 两端对齐 */
+            margin-top: 60px; /* 顶部外边距加大 */
+
+            .remark-container {
+                // 添加过渡属性，让变化更丝滑
+                // cubic-bezier 模拟了弹簧的物理回弹感
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                cursor: pointer; // 鼠标放上去变成小手，提示可点击
+
+                // 鼠标悬停状态：轻微上浮，暗示“可被操作”
+                &:hover {
+                    transform: translateY(-5px);
+                }
+
+                // 点击激活状态：缩小到 0.9 倍，模拟“按下”
+                &:active {
+                    transform: scale(0.9);
+                }
+
+                .ball {
+                    width: 100px; /* 圆球变大 */
+                    height: 100px; /* 圆球变大 */
+                    border-radius: 50%; /* 圆角50%（圆形） */
+                    line-height: 100px; /* 行高匹配高度（垂直居中） */
+                    font-size: 32px; /* 数字字体变大 */
+                    text-align: center; /* 文字水平居中 */
+                    color: #fff; /* 白色文字 */
+                    font-weight: bold; /* 粗体字重 */
+                    margin: 0 auto 15px; /* 下方留白 */
+                }
+
+                .blue {
+                    background-color: @bg-color-32; /* 蓝色背景 */
+                }
+
+                .red {
+                    background-color: @bg-color-33; /* 红色背景 */
+                }
+
+                .green {
+                    background-color: @bg-color-34; /* 绿色背景 */
+                }
+
+                .remark {
+                    width: 100%; /* 宽度100% */
+                    text-align: center; /* 文字水平居中 */
+                    font-size: 20px; /* 标签文字变大 */
+                    margin-top: 10px; /* 顶部外边距 */
+                    color: @font-color-2; /* 文字颜色使用变量 */
+                }
+            }
+        }
+    }
+
+    .right {
+        .banner {
+            width: 800px; /* 图片宽度大幅增加 */
+            height: auto; /* 高度自适应 */
+            border-radius: 20px; /* 增加圆角 */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); /* 增加阴影层次感 */
+            transition: transform 0.4s ease-in-out; /* 添加过渡动画 */
+            animation: float 6s ease-in-out infinite; /* 添加呼吸动画 */
+        }
+
+        /* 鼠标悬停放大效果 */
+        .banner:hover {
+            transform: scale(1.03);
+        }
+    }
+}
+
+/* 定义呼吸动画 */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}

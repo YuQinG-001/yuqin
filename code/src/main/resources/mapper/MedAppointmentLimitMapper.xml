@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuqin.meinian.api.db.mapper.MedAppointmentLimitMapper">
+
+    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.MedAppointmentLimitEntity">
+            <id property="id" column="id" />
+            <result property="appointmentDate" column="appointment_date" />
+            <result property="actualLimit" column="actual_limit" />
+            <result property="maxLimit" column="max_limit" />
+            <result property="actualCount" column="actual_count" />
+            <result property="remark" column="remark" />
+            <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,appointment_date,actual_limit,max_limit,actual_count,remark,
+        create_time
+    </sql>
+</mapper>

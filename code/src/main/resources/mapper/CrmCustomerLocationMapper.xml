@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuqin.meinian.api.db.mapper.CrmCustomerLocationMapper">
+
+    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.CrmCustomerLocationEntity">
+            <id property="id" column="id" />
+            <result property="customerId" column="customer_id" />
+            <result property="beaconUuid" column="beacon_uuid" />
+            <result property="departmentId" column="department_id" />
+            <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,customer_id,beacon_uuid,department_id,create_time
+    </sql>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuqin.meinian.api.db.mapper.SysRoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.SysRoleEntity">
+            <id property="roleId" column="role_id" />
+            <result property="roleName" column="role_name" />
+            <result property="roleDesc" column="role_desc" />
+            <result property="permissionIds" column="permission_ids" />
+            <result property="defaultPermissions" column="default_permissions" />
+            <result property="isSystem" column="is_system" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        role_id,role_name,role_desc,permission_ids,default_permissions,is_system
+    </sql>
+</mapper>

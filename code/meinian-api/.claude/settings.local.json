@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf memory)",
+      "Bash(ln -s \"../D--Dev-meinian-health/memory\" memory)"
+    ]
+  }
+}

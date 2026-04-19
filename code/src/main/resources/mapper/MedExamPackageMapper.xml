@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuqin.meinian.api.db.mapper.MedExamPackageMapper">
+
+    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.MedExamPackageEntity">
+            <id property="id" column="id" />
+            <result property="packageCode" column="package_code" />
+            <result property="packageName" column="package_name" />
+            <result property="description" column="description" />
+            <result property="departmentExam" column="department_exam" />
+            <result property="labExam" column="lab_exam" />
+            <result property="medicalExam" column="medical_exam" />
+            <result property="otherExam" column="other_exam" />
+            <result property="examItems" column="exam_items" />
+            <result property="coverImage" column="cover_image" />
+            <result property="originalPrice" column="original_price" />
+            <result property="currentPrice" column="current_price" />
+            <result property="salesVolume" column="sales_volume" />
+            <result property="packageType" column="package_type" />
+            <result property="tags" column="tags" />
+            <result property="categoryId" column="category_id" />
+            <result property="promotionId" column="promotion_id" />
+            <result property="status" column="status" />
+            <result property="md5Hash" column="md5_hash" />
+            <result property="updateTime" column="update_time" />
+            <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,package_code,package_name,description,department_exam,lab_exam,
+        medical_exam,other_exam,exam_items,cover_image,original_price,
+        current_price,sales_volume,package_type,tags,category_id,
+        promotion_id,status,md5_hash,update_time,create_time
+    </sql>
+</mapper>

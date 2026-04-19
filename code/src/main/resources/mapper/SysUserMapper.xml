@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuqin.meinian.api.db.mapper.SysUserMapper">
+
+    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.SysUserEntity">
+            <id property="userId" column="user_id" />
+            <result property="username" column="username" />
+            <result property="password" column="password" />
+            <result property="realName" column="real_name" />
+            <result property="gender" column="gender" />
+            <result property="mobile" column="mobile" />
+            <result property="email" column="email" />
+            <result property="avatar" column="avatar" />
+            <result property="openId" column="open_id" />
+            <result property="deptId" column="dept_id" />
+            <result property="hireDate" column="hire_date" />
+            <result property="roleIds" column="role_ids" />
+            <result property="isSuperAdmin" column="is_super_admin" />
+            <result property="userStatus" column="user_status" />
+            <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id,username,password,real_name,gender,mobile,
+        email,avatar,open_id,dept_id,hire_date,
+        role_ids,is_super_admin,user_status,create_time
+    </sql>
+    <select id="selectPermissionsByUserId" resultType="java.lang.String">
+        select distinct p.permission_code
+        from sys_user u
+                 join
+             sys_role r
+             on
+                 json_contains(u.role_ids, cast(r.role_id as json))
+                 join
+             sys_permission p
+             on
+                 json_contains(r.permission_ids, cast(p.permission_id as json))
+        where u.user_id = #{userId}
+          and u.user_status = 1;
+    </select>
+</mapper>

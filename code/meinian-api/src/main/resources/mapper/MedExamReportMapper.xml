@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuqin.meinian.api.db.mapper.MedExamReportMapper">
+
+    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.MedExamReportEntity">
+            <id property="id" column="id" />
+            <result property="appointmentId" column="appointment_id" />
+            <result property="reportId" column="report_id" />
+            <result property="status" column="status" />
+            <result property="fileUrl" column="file_url" />
+            <result property="expressNo" column="express_no" />
+            <result property="expressDate" column="express_date" />
+            <result property="examDate" column="exam_date" />
+            <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,appointment_id,report_id,status,file_url,express_no,
+        express_date,exam_date,create_time
+    </sql>
+</mapper>

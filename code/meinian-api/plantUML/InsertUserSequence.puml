@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title 用户登录时序图
+' 定义参与者
+actor "浏览器" as Browser
+participant UserController
+participant SysUserService
+participant SysUserMapper
+
+' 消息流程
+Browser -> UserController: 1：发送ajax请求提交数据
+activate UserController
+
+UserController -> UserController: 2：权限检查
+UserController -> UserController: 3：封装form数据
+UserController -> UserController: 4：校验form数据
+UserController -> UserController: 5：将form数据转换成UserEntity
+
+UserController -> SysUserService: 6：save
+activate SysUserService
+
+SysUserService -> SysUserService: 7：密码混淆
+
+SysUserService -> SysUserMapper: 8：insert
+activate SysUserMapper
+
+SysUserMapper --> SysUserService: 9：int
+deactivate SysUserMapper
+
+SysUserService --> UserController: 10：int
+deactivate SysUserService
+
+UserController --> Browser: 11：R
+deactivate UserController
+
+@enduml

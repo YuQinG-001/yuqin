@@ -1,0 +1,26 @@
+@startuml
+participant Actor
+Actor -> UserController : page
+activate UserController
+UserController -> SysUserService : queryUserWithRolesPage()
+activate SysUserService
+SysUserService -> SysUserServiceImpl : queryUserWithRolesPage()
+activate SysUserServiceImpl
+SysUserServiceImpl -> Page : Page.of
+activate Page
+Page --> SysUserServiceImpl
+deactivate Page
+SysUserServiceImpl -> JoinService : selectJoinListPage()
+activate JoinService
+JoinService --> SysUserServiceImpl : IPage<UserPageVO>
+deactivate JoinService
+SysUserServiceImpl --> SysUserService : IPage<UserPageVO>
+deactivate SysUserServiceImpl
+SysUserService --> UserController : IPage<UserPageVO>
+deactivate SysUserService
+UserController -> R : ok()
+activate R
+R --> UserController : R<IPage<UserPageVO>>
+deactivate R
+return
+@enduml

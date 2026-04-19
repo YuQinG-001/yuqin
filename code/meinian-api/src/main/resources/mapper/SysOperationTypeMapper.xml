@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuqin.meinian.api.db.mapper.SysOperationTypeMapper">
+
+    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.SysOperationTypeEntity">
+            <id property="id" column="id" />
+            <result property="operationCode" column="operation_code" />
+            <result property="operationName" column="operation_name" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,operation_code,operation_name
+    </sql>
+</mapper>
