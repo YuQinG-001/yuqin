@@ -99,9 +99,15 @@
             <!-- type="selection" 规定这一列是复选框列 -->
             <!-- header-align="center" 表示表头内容居中 -->
             <!-- align="center" 表示列中数据居中 -->
-            <el-table-column type="selection" header-align="center" align="center" width="50" />
+            <el-table-column
+                type="selection"
+                :selectable="(row) => row.isSuperAdmin !== 1"
+                header-align="center"
+                align="center"
+                width="50"
+            />
 
-            <!-- 这一列是序号，不是主键值哈。 -->
+            <!-- 这一列是序号，不是主键值。 -->
             <!-- type="index" 告诉EP组件，这一列不用绑定数据，请自动帮我生成行号 -->
             <el-table-column
                 type="index"
@@ -197,14 +203,13 @@
                     <el-button
                         type="text"
                         v-if="isAuth(['ROOT', 'USER:UPDATE'])"
-                        :disabled="scope.row.status == '离职' || scope.row.root"
+                        :disabled="scope.row.userStatus == '离职' || scope.row.isSuperAdmin"
                         @click="dismissHandle(scope.row.userId)"
                     >
                         离职
                     </el-button>
                     <el-button
                         type="text"
-                        :disabled="scope.row.root"
                         v-if="isAuth(['ROOT', 'USER:DELETE'])"
                         @click="deleteHandle(scope.row.userId)"
                     >
@@ -250,7 +255,12 @@
         >
             <!-- prop="username"是将username的校验规则绑定到表单项上 -->
             <el-form-item label="用户名" prop="username">
-                <el-input v-model="dialog.dataForm.username" maxlength="20" clearable />
+                <el-input
+                    v-model="dialog.dataForm.username"
+                    maxlength="20"
+                    :disabled="dialog.update"
+                    clearable
+                />
             </el-form-item>
             <!-- v-if="!dialog.update" 用来决定密码框显示还是隐藏 -->
             <el-form-item label="密码" prop="password" v-if="!dialog.update">
@@ -354,6 +364,7 @@
         roleName: string;
     }
     interface DataList {
+        selections: number;
         userStatus: number | string;
     }
 
@@ -533,8 +544,6 @@
                 const result = await request.get('/mis/user/queryUserById', {
                     params: { userId: dialog.dataForm.id },
                 });
-                console.log('🚀 ~ updateHandle ~ result:', result);
-
                 // 安全地解构赋值，避免 result 为空时报错
                 if (result) {
                     const { deptId, username, realName, gender, mobile, hireDate, roleIds, email } =
@@ -563,12 +572,13 @@
         // 用户离职处理
         const dismissHandle = async (userId: number) => {
             try {
+                const ids = [userId];
                 await ElMessageBox.confirm('确定要将该用户标记为离职吗？', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning',
                 });
-                await request.post(`/mis/user/dismiss/${userId}`);
+                await request.put('/mis/user/dismiss', {}, { params: {ids} });
                 ElMessage.success('用户离职成功');
                 loadPageData();
             } catch (error) {
@@ -603,11 +613,30 @@
                         },
                     );
                 }
-                await request.post('/mis/user/delete', { ids });
+
+                // 显示加载状态
+                data.loading = true;
+
+                // 发送删除请求（响应拦截器会处理失败情况，返回 Promise.reject）
+                await request.delete('/mis/user/removeByIds', { params: { ids } });
+
+                // 只有响应成功（code === 200）时才会执行到这里，响应拦截器已处理失败情况
                 ElMessage.success('删除成功');
                 loadPageData();
-            } catch (error) {
-                console.error('删除用户操作异常:', error);
+            } catch (error: unknown) {
+                // 取消操作不显示错误提示
+                if (
+                    error &&
+                    typeof error === 'object' &&
+                    'type' in error &&
+                    error.type === 'cancel'
+                ) {
+                    return;
+                }
+
+                //  console.error('删除用户操作异常:', error);
+            } finally {
+                data.loading = false;
             }
         };
 
@@ -656,10 +685,9 @@
 
                 // 发送 POST 请求
                 const result = await request.post('/mis/user/page', sendData);
-
                 // 安全取出分页数据（防止 result 为 null 时报错）
-                const { records = [], total = 0 } = result || {};
-                data.dataList = records;
+                const { records, total } = result || {};
+                data.dataList = records ?? [];
                 data.dataList.forEach((item: DataList) => {
                     if (item.userStatus == 1) {
                         item.userStatus = '在职';
@@ -667,7 +695,7 @@
                         item.userStatus = '离职';
                     }
                 });
-                data.totalCount = total;
+                data.totalCount = total ?? 0;
             } catch (error) {
                 // 拦截器已经提示过错误了
                 data.dataList = [];

@@ -4,16 +4,25 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 体检套餐表
  * @TableName med_exam_package
  */
-@TableName(value ="med_exam_package")
+@Accessors(chain = true)
+@TableName(value ="med_exam_package",autoResultMap = true)
 @Data
 public class MedExamPackageEntity implements Serializable {
     /**
@@ -40,27 +49,32 @@ public class MedExamPackageEntity implements Serializable {
     /**
      * 科室检查项目
      */
-    private String departmentExam;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<ExamItem> departmentExam;
 
     /**
      * 实验室检查项目
      */
-    private String labExam;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<ExamItem> labExam;
 
     /**
      * 医技检查项目
      */
-    private String medicalExam;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<ExamItem> medicalExam;
 
     /**
      * 其他检查项目
      */
-    private String otherExam;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<ExamItem> otherExam;
 
     /**
      * 详细检查项
      */
-    private String examItems;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<ExaminationDetail> examItems;
 
     /**
      * 封面图片
@@ -70,11 +84,13 @@ public class MedExamPackageEntity implements Serializable {
     /**
      * 原价
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigDecimal originalPrice;
 
     /**
      * 现价
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigDecimal currentPrice;
 
     /**
@@ -90,7 +106,8 @@ public class MedExamPackageEntity implements Serializable {
     /**
      * 标签
      */
-    private String tags;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> tags;
 
     /**
      * 分类ID(1:活动专区,2:热卖套餐,3:新品推荐,4:孝敬父母,5:白领精英)
@@ -122,6 +139,7 @@ public class MedExamPackageEntity implements Serializable {
      */
     private LocalDateTime createTime;
 
+    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 

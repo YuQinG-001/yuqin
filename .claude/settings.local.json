@@ -15,7 +15,8 @@
       "Bash(xargs grep *)",
       "Bash(unzip -p mybatis-plus-extension-3.5.12.jar)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(npm run *)"
     ]
   }
 }

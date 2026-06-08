@@ -39,13 +39,41 @@ export default [
                     title: '角色管理',
                 },
             },
-                        {
+            {
                 path: 'user',
                 name: 'MisUser',
                 component: () => import('../views/mis/user.vue'),
                 meta: {
                     isTab: true,
                     title: '用户管理',
+                },
+            },
+            {
+                path: 'goods',
+                name: 'MisGoods',
+                component: () => import('../views/mis/goods.vue'),
+                props: true,
+                meta: {
+                    isTab: true,
+                    title: '体检套餐',
+                },
+            },
+            {
+                path: 'order',
+                name: 'MisOrder',
+                component: () => import('../views/mis/order.vue'),
+                meta: {
+                    title: '订单管理',
+                    isTab: true,
+                },
+            },
+            {
+                path: 'rule',
+                name: 'MisRule',
+                component: () => import('../views/mis/rule.vue'),
+                meta: {
+                    title: '促销规则',
+                    isTab: true,
                 },
             },
         ],

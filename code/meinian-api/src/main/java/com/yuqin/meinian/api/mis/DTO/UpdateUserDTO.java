@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
-public class UpdateUserDIO {
+public class UpdateUserDTO {
 
     @Schema(description = "User表的主键", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "userId不能为空")

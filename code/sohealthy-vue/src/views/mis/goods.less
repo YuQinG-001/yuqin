@@ -1,0 +1,98 @@
+/* 通用链接样式：去除下划线，添加过渡动画，鼠标变手型 */
+.link-blue,
+.link-red {
+    text-decoration: none; /* 去掉默认下划线 */
+    cursor: pointer;       /* 鼠标移上去变成小手 */
+    transition: opacity 0.3s; /* 颜色变化时的过渡动画 */
+    font-weight: 500;      /* 稍微加粗一点，更清晰 */
+}
+
+/* 鼠标悬停时的统一效果：变半透明 */
+.link-blue:hover,
+.link-red:hover {
+    opacity: 0.8;
+    text-decoration: underline; /* 悬停时显示下划线，提示可点击 */
+}
+
+/* 状态1：已体检 (蓝色) */
+.link-blue {
+    color: #409EFF; /* Element UI 的标准蓝色，或者你可以用 #1890ff (Ant Design蓝) */
+}
+
+/* 状态2：未体检 (红色) */
+.link-red {
+    color: #F56C6C; /* Element UI 的危险/错误红色，或者你可以用 #FF4D4F */
+}
+.image-uploader {
+    width: 90px;
+    height: 90px;
+    border: 1px dashed var(--el-border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    //如果图片不是正方形，缩放之后溢出部分被截掉
+    overflow: hidden;
+}
+
+.el-icon.image-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 90px;
+    height: 90px;
+    text-align: center;
+}
+.image {
+    width: 90px;
+    height: 90px;
+    object-fit: cover
+}
+.price {
+    width: 200px;
+}
+.desc {
+    margin-left: 20px;
+    font-size: 14px;
+    color: @font-color-3;
+}
+
+.tag-row {
+    width: 100%;
+    width: 100%;
+    .tag-input {
+        width: 50%;
+    }
+}
+.tags {
+    margin-top: 5px;
+}
+.item-row {
+    width: 90%;
+    margin-bottom: auto;
+}
+.input {
+    width: auto; /* 宽度自适应内容 */
+    min-width: 150px; /* 最小宽度，防止太窄 */
+}
+.mold {
+    float: right;
+    //el-form-item自带右外填充，所以我们要把外填充去掉
+    margin-right: 0 !important;
+}
+.message-content {
+    display: flex;
+    .icon {
+        color: @bg-color-17;
+        margin-top: 3px;
+    }
+    p {
+        margin: 0 10px 5px 10px;
+        line-height: 1.7;
+    }
+}
+.document-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    .uploadBtn {
+        margin-right: 10px;
+    }
+
+}

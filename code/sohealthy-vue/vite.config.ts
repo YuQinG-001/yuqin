@@ -35,7 +35,8 @@ export default defineConfig({
         // 这样后端就不会认为是跨域访问了。
         proxy: {
             '/meinian-api': {
-                target: 'https://localhost:8080',
+                // target: 'https://localhost:8080',
+                target: 'http://localhost:8080',
                 changeOrigin: true,
                 secure: false, // vite开发服务器不验证后端服务器的证书（我们HTTPS协议使用的是自签名证书，因此这里不能让Vite开发服务器验证证书，如果验证会失败）
             },

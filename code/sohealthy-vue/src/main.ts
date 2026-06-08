@@ -2,7 +2,8 @@ import { createApp } from 'vue';
 import App from './App.vue';
 
 const app = createApp(App);
-
+// 配置WebSocket
+import VueNativeSock from 'vue-native-websocket-vue3';
 // 导入路由配置
 import router from './router';
 app.use(router);
@@ -45,5 +46,14 @@ app.config.globalProperties.isAuth = function (permissions: string[]) {
         return false;
     }
 };
+//Minio服务器地址
+let minioUrl = 'http://192.168.5.3:9000/meinian-his';
+// 为什么以美元符号开始，这是Vue的开发规范中规定的，全局变量以 $ 符号开头，这样可以和组件自身的属性很好的区分开。
+app.config.globalProperties.$minioUrl = minioUrl;
 
+app.use(VueNativeSock, 'ws://localhost:8080/meinian-api/websocket/push/message', {
+    format: 'json',
+    // 如果WebSocket连接长时间不收发请求，会被服务端切断连接，下面的设置可以自动重连
+    reconnection: true
+});
 app.mount('#app');

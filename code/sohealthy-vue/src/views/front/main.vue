@@ -1,12 +1,8 @@
 <template>
     <div class="container">
         <header>
-            <div class="logo-container">
-                <img
-                    src="../../assets/front/index/logo.png"
-                    alt="logo"
-                    class="logo"
-                />
+            <div class="logo-container" @click="router.push({ name: 'FrontIndex' })">
+                <img src="../../assets/front/index/logo.png" alt="logo" class="logo" />
                 <div>
                     <h3>美年大健康</h3>
                     <p>www.sohealth.com</p>
@@ -23,7 +19,7 @@
                         clearable
                     >
                         <template #append>
-                            <el-button>搜索</el-button>
+                            <el-button @click="searchGoods">搜索</el-button>
                         </template>
                     </el-input>
                 </div>
@@ -40,6 +36,7 @@
                         :type="item.type"
                         :key="item.label"
                         effect="light"
+                        @click="tagHandle(item.label)"
                         class="tag"
                         round
                     >
@@ -49,7 +46,26 @@
             </div>
             <div class="oper-container">
                 <!-- 将来用户登录成功后，登录/注册 按钮会隐藏，然后显示  个人中心 退出 。 -->
-                <el-button type="primary" size="large"> 登录/注册 </el-button>
+                <el-button
+                    type="primary"
+                    size="large"
+                    v-if="dialog.status == 'logout'"
+                    @click="showDialog"
+                >
+                    登录/注册
+                </el-button>
+                <div
+                    class="btn"
+                    v-if="dialog.status == 'login'"
+                    @click="router.push({ name: 'FrontCustomerMine' })"
+                >
+                    <el-icon><User /></el-icon>
+                    <span>个人中心</span>
+                </div>
+                <div class="btn" v-if="dialog.status == 'login'" @click="logout">
+                    <el-icon><SwitchButton /></el-icon>
+                    <span>退出系统</span>
+                </div>
             </div>
         </header>
         <!-- 二级路由出口 -->
@@ -64,9 +80,7 @@
                     <img src="../../assets/front/index/d1.svg" alt="" />
                     <div>
                         <h3>全国连锁</h3>
-                        <p>
-                            覆盖全国主要城市的专业体检网络，随时随地享受便捷服务
-                        </p>
+                        <p>覆盖全国主要城市的专业体检网络，随时随地享受便捷服务</p>
                     </div>
                 </li>
                 <li class="item">
@@ -80,18 +94,14 @@
                     <img src="../../assets/front/index/d3.svg" alt="" />
                     <div>
                         <h3>权威专家</h3>
-                        <p>
-                            由三甲医院资深医师组成的专业团队，确保检查结果准确可靠
-                        </p>
+                        <p>由三甲医院资深医师组成的专业团队，确保检查结果准确可靠</p>
                     </div>
                 </li>
                 <li class="item">
                     <img src="../../assets/front/index/d4.svg" alt="" />
                     <div>
                         <h3>贴心服务</h3>
-                        <p>
-                            一对一健康顾问，报告专业解读，后续健康指导全程陪伴
-                        </p>
+                        <p>一对一健康顾问，报告专业解读，后续健康指导全程陪伴</p>
                     </div>
                 </li>
             </ul>
@@ -156,13 +166,61 @@
             </ul>
         </div>
     </footer>
+    <el-dialog v-model="dialog.visible" title="手机快速登录" width="400" class="dialog">
+        <el-row>
+            <el-col :span="24">
+                <el-input
+                    v-model="dialog.phone"
+                    placeholder="输入手机号，快捷登录"
+                    size="large"
+                    maxlength="11"
+                    clearable
+                >
+                    <template #prepend>
+                        <el-icon><Iphone /></el-icon>
+                    </template>
+                </el-input>
+            </el-col>
+        </el-row>
+        <el-row :gutter="10">
+            <el-col :span="16">
+                <el-input
+                    v-model="dialog.code"
+                    placeholder="输入短信验证码"
+                    size="large"
+                    maxlength="6"
+                    clearable
+                >
+                    <template #prepend>
+                        <el-icon><Message /></el-icon>
+                    </template>
+                </el-input>
+            </el-col>
+            <el-col :span="8">
+                <el-button
+                    size="large"
+                    class="receive-btn"
+                    type="primary"
+                    plain
+                    @click="sendSmsCode"
+                    :disabled="dialog.disabled"
+                >
+                    {{ dialog.btnContent }}
+                </el-button>
+            </el-col>
+        </el-row>
+        <el-button type="primary" class="login-btn" size="large" @click="login">
+            登录系统
+        </el-button>
+    </el-dialog>
 </template>
 
 <script lang="ts" setup>
     import router from '../../router';
-    import { reactive, getCurrentInstance } from 'vue';
-    import type { TagProps } from 'element-plus';
-
+    import { reactive, getCurrentInstance, onMounted } from 'vue';
+    import { ElMessage, type TagProps } from 'element-plus';
+    import { isPhone, stringIsEmpty, isSmsCode } from '../../utils/validate';
+    import request from '../../utils/request';
     interface TagItem {
         label: string;
         type: TagProps['type'];
@@ -191,6 +249,112 @@
                 type: 'info',
             },
         ] as TagItem[],
+    });
+    const dialog = reactive({
+        visible: false,
+        phone: '',
+        code: null,
+        disabled: false,
+        btnContent: '获取短信验证码',
+        num: 0,
+        status: 'logout',
+    });
+
+    const dataRule = reactive({
+        phone: [{ required: true, pattern: '^1[1-9]\d{9}$', message: '手机号码错误' }],
+    });
+    function showDialog() {
+        dialog.visible = true;
+    }
+    async function sendSmsCode() {
+        const phone = dialog.phone;
+        if (stringIsEmpty(phone)) {
+            ElMessage.error('手机号不能为空');
+            return;
+        }
+        if (!isPhone(phone)) {
+            ElMessage.error('请填写正确手机号');
+            return;
+        }
+        const result = await request.get('/front/customer/sendSmsCode', { params: { phone } });
+        if (result) {
+            ElMessage.success('已发送验证码');
+        }
+        dialog.disabled = true;
+        const interval = setInterval(() => {
+            dialog.num++;
+            dialog.btnContent = `${60 - dialog.num}秒后重新获取`;
+            if (dialog.num === 60) {
+                dialog.num = 0;
+                dialog.disabled = false;
+                dialog.btnContent = '获取短信验证码';
+                clearInterval(interval);
+            }
+        }, 1000);
+    }
+    async function checkLogin() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return //ElMessage.error('登入过期，请重新登入');
+            await request.get('/front/customer/isLogin');
+            dialog.status = 'login';
+        } catch (error: any) {
+            // 根据后端返回的状态码判断（例如 401）
+            localStorage.removeItem('token');
+            ElMessage.error(error.response?.data?.msg || '登录状态已失效，请重新登录');
+            // 可选：跳转登录页
+        }
+    }
+    async function login() {
+        try {
+            //验证表单
+            if (stringIsEmpty(dialog.phone)) {
+                ElMessage.error('手机号不能为空');
+                return;
+            }
+            if (!isPhone(dialog.phone)) {
+                ElMessage.error('请填写正确手机号');
+                return;
+            }
+            if (stringIsEmpty(dialog.code)) {
+                ElMessage.error('请输入验证码');
+                return;
+            }
+            //发送axios请求
+            const result = await request.post(
+                '/front/customer/login?phone=' + dialog.phone + '&code=' + dialog.code,
+            );
+            // 将token上传到localStorage;
+            localStorage.setItem('token', result.token);
+
+            dialog.status = 'login';
+            ElMessage.success('登入成功');
+            dialog.visible = false;
+        } finally {
+            dialog.visible = false;
+            dialog.code = null;
+            dialog.phone = '';
+        }
+    }
+    async function logout() {
+        await request.get('/front/customer/logout');
+        dialog.status = 'logout';
+        router.push({ name: 'FrontIndex' });
+        ElMessage.success('退出成功');
+    }
+    function searchGoods() {
+        if (header.keyword.trim() === '' || header.keyword === null) return;
+        router.push({
+            name: 'FrontGoodsList',
+            query: { keyword: header.keyword, random: new Date().getTime() },
+        });
+    }
+    header.keyword = router.currentRoute.value.query.keyword as string;
+    function tagHandle(value: string) {
+        header.keyword = value;
+    }
+    onMounted(() => {
+        checkLogin();
     });
 </script>
 

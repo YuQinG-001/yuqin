@@ -44,7 +44,7 @@ public class R<T> implements Serializable {
     public static <T> R<T> ok(String msg, T data) {
         return new R<>(HttpStatus.SC_OK, msg, data);
     }
-    public static <T> R<T> ok(String msg) {
+    public static <T> R<T> success(String msg) {
         return new R<>(HttpStatus.SC_OK, msg);
     }
 

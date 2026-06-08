@@ -14,6 +14,7 @@
         "element-plus": "^2.13.6",
         "fast-glob": "^3.3.3",
         "vue": "^3.5.13",
+        "vue-native-websocket-vue3": "^3.1.8",
         "vue-router": "^5.0.4"
     },
     "devDependencies": {

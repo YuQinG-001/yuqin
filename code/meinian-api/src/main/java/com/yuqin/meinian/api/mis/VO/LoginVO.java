@@ -1,14 +1,9 @@
 package com.yuqin.meinian.api.mis.VO;
 
-import com.yuqin.meinian.api.db.entity.SysUserEntity;
-import lombok.Builder;
-import lombok.Data;
-
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+
 import java.util.List;
 
 @Data

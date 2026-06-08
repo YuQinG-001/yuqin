@@ -1,5 +1,6 @@
 package com.yuqin.meinian.api.mis.DTO;
 
+import com.yuqin.meinian.api.common.BasePageDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;

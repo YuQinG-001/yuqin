@@ -379,7 +379,7 @@
 
     const updateContentViewHeight = () => {
         const windowHeight = window.innerHeight;
-        let height = windowHeight - 50 - 30 - 2;
+        let height = windowHeight - 50 - 30 - 2 - 30;
         if (route.meta.isTab) height -= 40;
         contentViewHeight.value = height;
     };

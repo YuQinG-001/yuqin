@@ -58,10 +58,10 @@ class Request {
                             window.location.href = '/login';
                             break;
                         case 403:
-                            errorMsg = '没有权限访问';
+                            errorMsg = data?.msg || '没有权限访问';
                             break;
                         case 500:
-                            errorMsg = '服务器内部错误';
+                            errorMsg =  data?.msg || '服务器内部错误';
                             break;
                         default:
                             errorMsg = data?.msg || `请求失败 (状态码: ${status})`;
@@ -89,7 +89,7 @@ class Request {
     put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
         return this.axiosInstance.put(url, data, config);
     }
-    
+
     delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
         return this.axiosInstance.delete(url, config);
     }

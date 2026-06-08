@@ -1,13 +1,15 @@
 package com.yuqin.meinian.api.db.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -46,6 +48,7 @@ public class TradeOrderEntity implements Serializable {
     /**
      * 商品单价
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigDecimal goodsPrice;
 
     /**
@@ -66,6 +69,7 @@ public class TradeOrderEntity implements Serializable {
     /**
      * 订单总金额
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigDecimal totalAmount;
 
     /**
@@ -96,6 +100,7 @@ public class TradeOrderEntity implements Serializable {
     /**
      * 创建日期
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDate createDate;
 
     /**
@@ -108,6 +113,7 @@ public class TradeOrderEntity implements Serializable {
      */
     private LocalDate refundDate;
 
+    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 

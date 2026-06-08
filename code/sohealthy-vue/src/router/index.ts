@@ -6,6 +6,18 @@ import commonRoutes from './common';
 const router = createRouter({
     history: createWebHistory(),
     routes: [...frontRoutes, ...misRoutes, ...commonRoutes],
+    // scrollBehavior(to, _from, savedPosition) {
+    //     // 保存的位置（浏览器前进后退时）
+    //     if (savedPosition) {
+    //         return savedPosition;
+    //     }
+    //     // 如果有锚点 hash
+    //     if (to.hash) {
+    //         return { el: to.hash, behavior: 'smooth' };
+    //     }
+    //     // 默认滚动到顶部
+    //     return { top: 0, behavior: 'smooth' };
+    // },
 });
 
 // router.beforeEach 在每次路由跳转前执行，用于权限控制、登录验证等全局路由守卫。

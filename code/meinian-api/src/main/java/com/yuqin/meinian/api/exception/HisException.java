@@ -1,6 +1,7 @@
 package com.yuqin.meinian.api.exception;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author YuQin
@@ -9,6 +10,7 @@ import lombok.Data;
  */
 
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class HisException extends RuntimeException {
     private String msg;

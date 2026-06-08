@@ -16,7 +16,7 @@ public class OrderService {
         return chain.apply(dto);
     }
 
- /*   private Function<QueryUserPageDTO, String> buildOrderChain() {
+    private Function<QueryUserPageDTO, String> buildOrderChain() {
         Function<QueryUserPageDTO, String> chain = (dto) -> "成功";
         for (OrderHandler orderHandler : orderHandlers) {
             final OrderHandler curHandler = orderHandler;
@@ -24,12 +24,11 @@ public class OrderService {
             chain = dto -> curHandler.handler(dto, next);
         }
         return chain;
-    }*/
+    }
 
-    private Function<QueryUserPageDTO, String> buildOrderChain() {
+    private Function<QueryUserPageDTO, String> buildOrderChain1() {
         // 初始值：链尾
         Function<QueryUserPageDTO, String> initialChain = dto -> "成功";
-
         // 使用 reduce 从左到右累积
         return orderHandlers.stream()
                 .reduce(initialChain,

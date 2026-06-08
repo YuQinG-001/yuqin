@@ -1,5 +1,6 @@
 package com.yuqin.meinian.api.db.mapper;
 
+import com.github.yulichang.base.MPJBaseMapper;
 import com.yuqin.meinian.api.db.entity.PromotionRuleEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -9,7 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2026-04-03 02:27:34
 * @Entity com.yuqin.meinian.api.db.entity.PromotionRuleEntity
 */
-public interface PromotionRuleMapper extends BaseMapper<PromotionRuleEntity> {
+public interface PromotionRuleMapper extends MPJBaseMapper<PromotionRuleEntity> {
 
 }
 

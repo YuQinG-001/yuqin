@@ -4,9 +4,17 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 客户信息表
@@ -14,6 +22,9 @@ import lombok.Data;
  */
 @TableName(value ="crm_customer")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CrmCustomerEntity implements Serializable {
     /**
      * 主键ID
@@ -44,8 +55,11 @@ public class CrmCustomerEntity implements Serializable {
     /**
      * 注册时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private LocalDateTime registerTime;
 
+    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 

@@ -1,5 +1,5 @@
 // 验证字符串是否为空
-export function stringIsEmpty(s: string){
+export function stringIsEmpty(s: string | null | undefined){
     return s == null || s.trim().length == 0;
 }
 

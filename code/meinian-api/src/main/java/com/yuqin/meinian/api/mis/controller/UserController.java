@@ -15,18 +15,23 @@ import com.yuqin.meinian.api.mis.VO.UserInfoVO;
 import com.yuqin.meinian.api.mis.VO.UserPageVO;
 import com.yuqin.meinian.api.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Tag(name = "用户管理", description = "提供用户登录、登出、密码修改等核心功能")
 @RestController
+@Validated
 @RequestMapping("/mis/user")
 @RequiredArgsConstructor
 public class UserController {
@@ -98,19 +103,49 @@ public class UserController {
     @GetMapping("/queryUserById")
     @SaCheckPermission(value = {"ROOT", "USER:SELECT"}, mode = SaMode.OR)
     public R<UserInfoVO> queryUserById(@RequestParam @NotNull(message = "userId不能为空")
-                                           @Min(value = 0, message = "userId不能小于0")
-                                           @Schema(description = "User表的主键", example = "1", requiredMode = Schema.RequiredMode.REQUIRED) Integer userId) {
+                                       @Min(value = 0, message = "userId不能小于0")
+                                       @Parameter(description = "User表的主键", example = "1", required = true)
+                                       Integer userId) {
         SysUserEntity sysUserEntity = sysUserService.queryUser(userId);
         return R.ok(BeanUtil.copyProperties(sysUserEntity, UserInfoVO.class));
     }
 
-    @Operation(summary = "更新用户信息", description = "将信息修改为模态框修改后的数据")
+    @Operation(summary = "更新用户信息", description = "将信息修改为模态框修改后的数据,返回值true或者异常")
     @SaCheckLogin
     @PutMapping("/modifyUser")
     @SaCheckPermission(value = {"ROOT", "USER:UPDATE"}, mode = SaMode.OR)
-    public R<Boolean> modifyUser(@RequestBody @Valid UpdateUserDIO dto) {
-        Boolean b = sysUserService.modifyUser(dto);
-        return R.ok(b);
+    public R<String> modifyUser(@RequestBody @Valid UpdateUserDTO dto) {
+        int i = sysUserService.modifyUser(dto);
+        return R.ok("成功修改 " + i + " 条数据");
+    }
+
+    @Operation(summary = "删除用户信息", description = "批量删除用户，亦可删除指定用户")
+    @SaCheckLogin
+    @DeleteMapping("/removeByIds")
+    @SaCheckPermission(value = {"ROOT", "USER:DELETE"}, mode = SaMode.OR)
+    public R<String> removeByIds(
+            @Parameter(description = "用户ID数组，至少提供一个ID", required = true)
+            @RequestParam
+            @NotNull(message = "ids 不能为 null")
+            @Size(min = 1, message = "至少需要提供一个用户ID")
+            List<Integer> ids) {
+        int i = sysUserService.removeUserByIds(ids);
+        ids.forEach(StpUtil::logout);
+        return R.ok("已删除：" + i + " 条数据");
+    }
+
+    @Operation(summary = "用户离职", description = "指定用户离职,后续可能会扩展")
+    @SaCheckLogin
+    @PutMapping("/dismiss")
+    @SaCheckPermission(value = {"ROOT", "USER:UPDATE"}, mode = SaMode.OR)
+    public R<String> dismiss(
+            @Parameter(description = "用户ID数组，至少提供一个ID", required = true)
+            @RequestParam
+            @NotNull(message = "ids 不能为 null")
+            @Size(min = 1, message = "至少需要提供一个用户ID")
+            @Valid List<Integer> ids) {
+        int updatedCount = sysUserService.dismissUser(ids);
+        return R.ok("成功设置 " + updatedCount + " 位用户离职");
     }
 
 }

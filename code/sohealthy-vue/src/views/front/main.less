@@ -80,6 +80,24 @@ header {
     float: right;
     // 将来的 个人中心 退出 可以自动排列
     display: flex;
+    /* 通用按钮容器样式 */
+    .btn {
+        display: flex; /* 启用Flex布局，使图标和文字水平排列 */
+        margin-left: 30px; /* 左侧外边距30px，与其他元素保持间距 */
+        cursor: pointer; /* 鼠标悬停时显示手型指针，表明可点击 */
+
+        /* 按钮内的图标样式 */
+        .el-icon {
+            margin-top: 1px; /* 图标微调1px垂直偏移，实现视觉对齐 */
+        }
+
+        /* 按钮内的文字样式 */
+        span {
+            font-size: 14px; /* 设置文字大小为14px */
+            color: @font-color-2; /* 使用预定义变量设置文字颜色（通常为次要文字色） */
+            margin-left: 5px; /* 文字左侧与图标保持5px间距 */
+        }
+    }
 }
 footer {
     // 页脚和上面区域留个50px的空隙
@@ -235,5 +253,25 @@ footer {
                 }
             }
         }
+    }
+}
+/* 对话框组件内部样式 */
+.dialog {
+    /* 对话框内所有行元素设置统一底部间距 */
+    .el-row {
+        margin-bottom: 17px;
+    }
+
+    /* 接收按钮样式 - 通常用于确认、提交等主要操作 */
+    .receive-btn {
+        width: 100%; /* 按钮宽度充满父容器 */
+        outline: none; /* 移除焦点时的轮廓线，保持视觉简洁 */
+    }
+
+    /* 登录按钮样式 */
+    .login-btn {
+        width: 100%; /* 按钮宽度充满父容器 */
+        margin-top: 10px; /* 与上方元素保持10px间距 */
+        height: 45px; /* 固定按钮高度为45px */
     }
 }

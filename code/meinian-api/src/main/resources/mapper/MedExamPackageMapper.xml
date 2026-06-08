@@ -4,28 +4,28 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yuqin.meinian.api.db.mapper.MedExamPackageMapper">
 
-    <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.MedExamPackageEntity">
-            <id property="id" column="id" />
-            <result property="packageCode" column="package_code" />
-            <result property="packageName" column="package_name" />
-            <result property="description" column="description" />
-            <result property="departmentExam" column="department_exam" />
-            <result property="labExam" column="lab_exam" />
-            <result property="medicalExam" column="medical_exam" />
-            <result property="otherExam" column="other_exam" />
-            <result property="examItems" column="exam_items" />
-            <result property="coverImage" column="cover_image" />
-            <result property="originalPrice" column="original_price" />
-            <result property="currentPrice" column="current_price" />
-            <result property="salesVolume" column="sales_volume" />
-            <result property="packageType" column="package_type" />
-            <result property="tags" column="tags" />
-            <result property="categoryId" column="category_id" />
-            <result property="promotionId" column="promotion_id" />
-            <result property="status" column="status" />
-            <result property="md5Hash" column="md5_hash" />
-            <result property="updateTime" column="update_time" />
-            <result property="createTime" column="create_time" />
+    <resultMap id="BaseResultMap" type="MedExamPackageEntity">
+        <id property="id" column="id" />
+        <result property="packageCode" column="package_code" />
+        <result property="packageName" column="package_name" />
+        <result property="description" column="description" />
+        <result property="departmentExam" column="department_exam" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="labExam" column="lab_exam" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler" />
+        <result property="medicalExam" column="medical_exam" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="otherExam" column="other_exam" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="examItems" column="exam_items" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="coverImage" column="cover_image" />
+        <result property="originalPrice" column="original_price" />
+        <result property="currentPrice" column="current_price" />
+        <result property="salesVolume" column="sales_volume" />
+        <result property="packageType" column="package_type" />
+        <result property="tags" column="tags" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="categoryId" column="category_id" />
+        <result property="promotionId" column="promotion_id" />
+        <result property="status" column="status" />
+        <result property="md5Hash" column="md5_hash" />
+        <result property="updateTime" column="update_time" />
+        <result property="createTime" column="create_time" />
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -34,4 +34,45 @@
         current_price,sales_volume,package_type,tags,category_id,
         promotion_id,status,md5_hash,update_time,create_time
     </sql>
+    <resultMap id="ExamPackageDetailBOMap" type="ExamPackageDetailBO">
+        <result property="tags" column="tags" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="departmentExam" column="department_exam" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="labExam" column="lab_exam" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="medicalExam" column="medical_exam" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="otherExam" column="other_exam" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+    </resultMap>
+
+    <select id="selectByIdWithStatus" resultMap="ExamPackageDetailBOMap">
+        SELECT
+        g.package_code ,
+        g.package_name ,
+        g.description ,
+        g.cover_image ,
+        CAST(g.original_price AS CHAR) AS original_price,
+        CAST(g.current_price AS CHAR) AS current_price,
+        r.rule_id ,
+        r.rule_name ,
+        g.package_type ,
+        g.tags,
+        g.category_id ,
+        g.department_exam ,
+        IFNULL(JSON_LENGTH(g.department_exam), 0) AS count1,
+        g.lab_exam ,
+        IFNULL(JSON_LENGTH(g.lab_exam), 0) AS count2,
+        g.medical_exam ,
+        IFNULL(JSON_LENGTH(g.medical_exam), 0) AS count3,
+        g.other_exam ,
+        IFNULL(JSON_LENGTH(g.other_exam), 0) AS count4
+        FROM
+        med_exam_package g
+        LEFT JOIN
+        promotion_rule r
+        ON
+        g.promotion_id = r.rule_id
+        WHERE
+        g.id = #{id}
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+    </select>
 </mapper>

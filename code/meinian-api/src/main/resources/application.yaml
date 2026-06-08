@@ -50,15 +50,15 @@ server:
   port: 8080
   servlet:
     context-path: /meinian-api
-  ssl:
-    enabled: true
-    key-store-type: PKCS12
-    key-store: classpath:keystore.p12
-    key-store-password: 123456
+#  ssl:
+#    enabled: true
+#    key-store-type: PKCS12
+#    key-store: classpath:keystore.p12
+#    key-store-password: 123456
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
-  type-aliases-package: com.yuqin.meinian.api.db.pojo
+  type-aliases-package: com.yuqin.meinian.api.db.entity,com.yuqin.meinian.api.mis.VO,com.yuqin.meinian.api.BO
   configuration:
     #输出执行的SQL语句
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -99,3 +99,22 @@ sa-token:
   is-read-cookie: false
   # 开启同端互斥(允许异端登录，但PC端只能有一个账号有效，或者移动端只能有一个账号有效)
   is-concurrent: false
+
+minio:
+  endpoint: http://192.168.5.3:9000
+  access-key: root
+  secret-key: 12345678
+  bucket: meinian-his
+
+wechat:
+  app-id: wxcc651fcbab275e33
+  app-secret: 84dba6dd51cdaf779e55bcabae564b53
+  pay:
+    v3:
+      meinian-vue:
+        app-id: wxcc651fcbab275e33
+        app-v3-secret: 84dba6dd51cdaf779e55bcabae564b53
+        mch-id: 1631833859
+        domain: http://s2.gnip.vip:3298/meinian-api
+        #        domain: http://s2.gnip.vip:27680/meinian-api
+        merchant-serial-no: 4AE80B52EBEAB2B96F68E02510A42801E952E889

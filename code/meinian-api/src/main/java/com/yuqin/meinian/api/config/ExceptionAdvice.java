@@ -3,6 +3,7 @@ package com.yuqin.meinian.api.config;
 import cn.dev33.satoken.exception.NotLoginException;
 import com.yuqin.meinian.api.common.R;
 import com.yuqin.meinian.api.exception.HisException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.springframework.dao.DuplicateKeyException;
@@ -75,6 +76,18 @@ public class ExceptionAdvice {
                 .orElse("请求参数绑定失败");
         log.error(errorMsg, ex);
         return buildErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMsg);
+    }
+
+    /**
+     * 参数校验
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public R<Void> handleConstraintViolationException(ConstraintViolationException ex) {
+        String errorMsg = Optional.ofNullable(ex.getMessage())
+                .orElse("参数校验：存在非法参数");
+        log.error(errorMsg, ex);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), errorMsg);
     }
 
     /**
