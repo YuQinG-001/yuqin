@@ -204,7 +204,9 @@
             cancelButtonText: '取消',
         });
         const result = await request.post('/front/order/refund', { orderId });
-        if (!result) return ElMessage.error('退款失败请联系客服！');
+        if (!result) {
+            return ElMessage.error('退款失败请联系客服！');
+        }
         ElMessage.success('退款已提交，请稍后查看');
         loadPageData();
     }

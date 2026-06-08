@@ -98,4 +98,5 @@ public interface TradeOrderService extends MPJBaseService<TradeOrderEntity> {
 
 
     IPage<OrderPageQueryMisVO> pageQueryByCondition(OrderPageQueryMisDTO dto);
+
 }

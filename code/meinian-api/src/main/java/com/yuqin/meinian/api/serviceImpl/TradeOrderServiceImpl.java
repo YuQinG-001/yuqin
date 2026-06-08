@@ -118,7 +118,8 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
                 .set(TradeOrderEntity::getOrderStatus, 3)
                 .eq(TradeOrderEntity::getOutTradeNo, outTradeNo)
                 .eq(TradeOrderEntity::getOrderStatus, 1);
-        return baseMapper.update(null, wrapper) == 1;
+        TradeOrderEntity tOrder = new TradeOrderEntity();
+        return baseMapper.update(tOrder, wrapper) == 1;
     }
 
     @Override
@@ -177,7 +178,8 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
             log.info("已经退过款了");
             return false;
         }
-        TradeOrderEntity tradeOrderEntity = selectTranIdAndAmountByOrderId(orderId);
+        int loginIdAsInt = StpCustomerUtil.getLoginIdAsInt();
+        TradeOrderEntity tradeOrderEntity =  baseMapper.selectTranIdAndAmountByOrderId(loginIdAsInt, orderId);
         String transactionId = tradeOrderEntity.getTransactionId();
         BigDecimal totalAmount = tradeOrderEntity.getTotalAmount();
         long cents = totalAmount.multiply(BigDecimal.valueOf(100))
@@ -186,7 +188,11 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
         cents = 1L;
         Long refund = 1L;
         String notifyUrl = domain + "/front/order/refundCallback";
-        outRefundNo = paymentService.refund(transactionId, refund, cents, notifyUrl);
+        try {
+            outRefundNo = paymentService.refund(transactionId, refund, cents, notifyUrl);
+        } catch (Exception e) {
+            throw new HisException(e);
+        }
         if (outRefundNo == null) {
             log.info("outRefundNo is null");
             return false;
@@ -212,11 +218,21 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
 
     @Override
     public IPage<OrderPageQueryMisVO> pageQueryByCondition(OrderPageQueryMisDTO dto) {
+        LocalDate startDate = dto.getStartDate();
+        LocalDate endDate = dto.getEndDate();
+        // 只有一个为空时，报错
+        if ((startDate != null) ^ (endDate != null)) {
+            throw new HisException("开始日期和结束日期必须同时填写");
+        } else if (endDate != null){
+            if (startDate.isAfter(endDate)) {
+                throw new HisException("开始日期必须在结束日期之前");
+            }
+        }
         Page<Object> page = Page.of(dto.getPageNum(), dto.getPageSize());
-        return baseMapper.selectPageVO(page,dto);
+        return baseMapper.selectPageVO(page, dto);
     }
 
-    // ========== 私有方法，拆分职责 ==========
+    // ========== 私有方法 ==========
     private IPage<TradeOrderPageFrontVO> selectPageByCondition(
             Integer customerId,
             String orderStatus,
@@ -406,8 +422,8 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
                 .select(TradeOrderEntity::getTotalAmount)
                 .eq(TradeOrderEntity::getOrderId, orderId)
                 .eq(TradeOrderEntity::getOrderStatus, 3)
-                .eq(TradeOrderEntity::getCustomerId, loginIdAsInt);
-        return baseMapper.selectOne(wrapper, true);
+                .eq(TradeOrderEntity::getCustomerId, 6);//loginIdAsInt
+        return baseMapper.selectOne(wrapper);
     }
 
     private int updateOutRefundNo(Integer orderId, String outRefundNo) {

@@ -18,6 +18,8 @@ public interface TradeOrderMapper extends MPJBaseMapper<TradeOrderEntity> {
 
 
     IPage<OrderPageQueryMisVO> selectPageVO(Page<?> page, @Param("dto") OrderPageQueryMisDTO dto);
+
+    TradeOrderEntity selectTranIdAndAmountByOrderId(@Param("loginIdAsInt") Integer loginIdAsInt,@Param("orderId") Integer orderId);
 }
 
 

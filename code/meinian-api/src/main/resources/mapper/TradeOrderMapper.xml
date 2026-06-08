@@ -39,16 +39,16 @@
         o.quantity,
         o.total_amount as totalAmount,
         o.order_status as orderStatus,
-        date_format(o.create_time, '%Y-%m-%d %H:%i') as createTime,
+        o.create_time as createTime,
         o.create_date as createDate,
-        date_format(o.refund_time, '%Y-%m-%d %H:%i') as refundTime,
+        o.refund_time as refundTime,
         o.refund_date as refundDate,
         o.order_id as orderId,
         c.photo_url as photoUrl,
         c.customer_name as customerName,
         c.gender,
         c.phone,
-        date_format(c.register_time, '%Y-%m-%d') as registerTime,
+        c.register_time as registerTime,
         o.out_trade_no as outTradeNo,
         o.transaction_id as transactionId,
         o.out_refund_no as outRefundNo,
@@ -70,22 +70,32 @@
         a.order_id = o.order_id
         <where>
             <if test="dto.packageCode != null and dto.packageCode != ''">
-                p.package_code like concat('%',#{packageCode},'%')
+                p.package_code like concat('%',#{dto.packageCode},'%')
             </if>
             <if test="dto.keyword != null and dto.keyword != ''">
-                and o.goods_title like concat('%',#{keyword},'%')
+                and o.goods_title like concat('%',#{dto.keyword},'%')
             </if>
             <if test="dto.phone != null and dto.phone != ''">
-                and c.phone = #{phone}
+                and c.phone = #{dto.phone}
             </if>
             <if test="dto.orderStatus != null">
-                and o.order_status = #{orderStatus}
+                and o.order_status = #{dto.orderStatus}
             </if>
             <if test="dto.startDate != null and dto.startDate != '' and dto.endDate != null and dto.endDate != ''">
-                and o.create_date between #{startDate} and #{endDate}
+                and o.create_date between #{dto.startDate} and #{dto.endDate}
             </if>
         </where>
         group by o.order_id
         order by o.order_id desc
+    </select>
+    <select id="selectTranIdAndAmountByOrderId" resultType="com.yuqin.meinian.api.db.entity.TradeOrderEntity">
+        SELECT
+            transaction_id,
+            total_amount
+        FROM trade_order
+        WHERE order_id = #{orderId}
+          AND order_status = 3
+          AND customer_id = #{loginIdAsInt}
+        LIMIT 1
     </select>
 </mapper>

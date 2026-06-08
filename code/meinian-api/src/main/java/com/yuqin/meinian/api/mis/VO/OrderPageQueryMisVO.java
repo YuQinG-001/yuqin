@@ -1,5 +1,6 @@
 package com.yuqin.meinian.api.mis.VO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
@@ -46,21 +47,25 @@ public class OrderPageQueryMisVO {
     /**
      * 创建时间 (格式: yyyy-MM-dd HH:mm)
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createTime;
 
     /**
      * 创建日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private LocalDate createDate;
 
     /**
      * 退款时间 (格式: yyyy-MM-dd HH:mm)
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime refundTime;
 
     /**
      * 退款日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private LocalDate refundDate;
 
     /**
@@ -91,7 +96,8 @@ public class OrderPageQueryMisVO {
     /**
      * 注册时间 (格式: yyyy-MM-dd)
      */
-    private LocalDateTime registerTime;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private LocalDate registerTime;
 
     /**
      * 订单流水号
