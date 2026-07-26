@@ -8,6 +8,8 @@ import com.yuqin.meinian.api.mis.DTO.OrderPageQueryMisDTO;
 import com.yuqin.meinian.api.mis.VO.OrderPageQueryMisVO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Map;
+
 /**
  * @author YuQin
  * @description 针对表【trade_order(交易订单表)】的数据库操作Mapper
@@ -20,6 +22,12 @@ public interface TradeOrderMapper extends MPJBaseMapper<TradeOrderEntity> {
     IPage<OrderPageQueryMisVO> selectPageVO(Page<?> page, @Param("dto") OrderPageQueryMisDTO dto);
 
     TradeOrderEntity selectTranIdAndAmountByOrderId(@Param("loginIdAsInt") Integer loginIdAsInt,@Param("orderId") Integer orderId);
+
+    int updateStatus(Map<String, Object> param);
+
+    Integer hasOwnOrder(Map<String, Object> param);
+
+    Map<String, Object> selectOrderIsFinished(String appointmentNo);
 }
 
 

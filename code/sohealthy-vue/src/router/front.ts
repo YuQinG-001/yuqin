@@ -24,6 +24,11 @@ export default [
                 component: () => import('../views/front/goods_list.vue'),
             },
             {
+                path: 'goods_snapshot/:id/:mode',
+                name: 'FrontGoodsSnapshot',
+                component: () => import('../views/front/goods_snapshot.vue'),
+            },
+            {
                 path: 'customer',
                 name: 'FrontCustomer',
                 component: () => import('../views/front/customer.vue'),
@@ -38,16 +43,16 @@ export default [
                         name: 'FrontOrderList',
                         component: () => import('../views/front/order_list.vue'),
                     },
-                    /*  {
-                        path: 'order_list',
-                        name: 'FrontAppointmentList',
-                        component: () => import('../views/front/Appointment_List.vue'),
-                    },
                     {
-                        path: 'order_list',
+                        path: 'customer_im',
                         name: 'FrontCustomerIm',
                         component: () => import('../views/front/FrontCustomerIm.vue'),
-                    }, */
+                    },
+                    {
+                        path: 'appointment_list',
+                        name: 'FrontAppointmentList',
+                        component: () => import('../views/front/appointment_list.vue'),
+                    },
                 ],
             },
         ],

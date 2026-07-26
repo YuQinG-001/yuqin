@@ -5,6 +5,8 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yuqin.meinian.api.common.R;
+import com.yuqin.meinian.api.db.entity.GoodsSnapshotEntity;
+import com.yuqin.meinian.api.front.DTO.FindGoodsBySnapshotIdDTO;
 import com.yuqin.meinian.api.front.DTO.FindTop4ByCategoryIdsDTO;
 import com.yuqin.meinian.api.front.DTO.MedExamPackagePageQueryDTO;
 import com.yuqin.meinian.api.front.VO.ExamPackageDetailForFrontVO;

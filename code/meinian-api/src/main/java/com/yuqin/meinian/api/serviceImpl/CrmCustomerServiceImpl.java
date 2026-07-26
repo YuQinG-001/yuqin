@@ -1,5 +1,6 @@
 package com.yuqin.meinian.api.serviceImpl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -27,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -157,7 +160,33 @@ public class CrmCustomerServiceImpl extends ServiceImpl<CrmCustomerMapper, CrmCu
         return CustomerLoginVO.builder().Id(id).token(tokenValue).build();
     }
 
-
+    @Override
+    public CustomerUserVO findSummary(Integer id){
+        CrmCustomerEntity crmCustomerEntity = baseMapper.selectById(id);
+        if (crmCustomerEntity == null) throw new HisException("请重新登入");
+        // 2. 查询订单统计
+        MPJLambdaWrapper<TradeOrderEntity> wrapper = MPJWrappers.lambdaJoin(TradeOrderEntity.class)
+                .selectSum(TradeOrderEntity::getTotalAmount, "totalAmount")
+                .selectCount(TradeOrderEntity::getOrderId, "totalCount")
+                .selectSum(TradeOrderEntity::getQuantity, "totalQuantity")
+                .eq(TradeOrderEntity::getCustomerId, id)
+                .in(TradeOrderEntity::getOrderStatus, Arrays.asList(3, 5, 6));
+        CustomerUserVO statistics = tradeOrderMapper.selectJoinOne(CustomerUserVO.class, wrapper);
+        // 3. 合并
+        return CustomerUserVO.builder()
+                .id(crmCustomerEntity.getId())
+                .customerName(crmCustomerEntity.getCustomerName())
+                .phone(crmCustomerEntity.getPhone())
+                .gender(crmCustomerEntity.getGender())
+                .photoUrl(crmCustomerEntity.getPhotoUrl())
+                .registerTime(crmCustomerEntity.getRegisterTime())
+                .totalAmount(statistics != null && statistics.getTotalAmount() != null ? statistics.getTotalAmount()
+                                                                                       : BigDecimal.ZERO)
+                .totalCount(statistics != null && statistics.getTotalCount() != null ? statistics.getTotalCount() : 0)
+                .totalQuantity(
+                        statistics != null && statistics.getTotalQuantity() != null ? statistics.getTotalQuantity() : 0)
+                .build();
+    }
 }
 
 

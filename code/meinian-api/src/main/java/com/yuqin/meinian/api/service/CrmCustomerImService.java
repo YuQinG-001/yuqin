@@ -4,11 +4,14 @@ import com.github.yulichang.base.MPJBaseService;
 import com.yuqin.meinian.api.db.entity.CrmCustomerImEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Map;
+
 /**
 * @author YuQin
 * @description 针对表【crm_customer_im(客户IM账号表)】的数据库操作Service
 * @createDate 2026-04-03 02:27:34
 */
 public interface CrmCustomerImService extends MPJBaseService<CrmCustomerImEntity> {
-
+    Map<String, Object> createAccount(int customerId);
+    Map<String, Object> getServiceAccount();
 }

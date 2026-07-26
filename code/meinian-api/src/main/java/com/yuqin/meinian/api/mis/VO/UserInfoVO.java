@@ -1,15 +1,21 @@
 package com.yuqin.meinian.api.mis.VO;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @Builder
 @Schema(description = "用户基本信息响应对象")
-public class UserInfoVO {
+public class UserInfoVO implements Serializable {
+    @Serial
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 
     @Schema(description = "用户ID")
     private Integer userId;

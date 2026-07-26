@@ -1,9 +1,9 @@
 spring:
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
-    serialization:
-      write-dates-as-timestamps: false
+  #  jackson:
+  #    date-format: yyyy-MM-dd HH:mm:ss
+  #    time-zone: GMT+8
+  #    serialization:
+  #      write-dates-as-timestamps: false
   application:
     name: meinian-api
   servlet:
@@ -123,3 +123,16 @@ wechat:
         domain: http://s2.gnip.vip:3298/meinian-api
         #        domain: http://s2.gnip.vip:27680/meinian-api
         merchant-serial-no: 4AE80B52EBEAB2B96F68E02510A42801E952E889
+tencent:
+  im:
+    sdkAppId: ${TENCENT_IM_SDKAPPID}
+    secretKey: ${TENCENT_IM_SECRETKEY}
+    managerId: administrator
+    customerServiceId: customer_service_1
+  cloud:
+    appId: ${FACE_APP_ID}
+    secretId: ${FACE_SECRET_ID}
+    secretKey: ${FACE_SECRET_KEY}
+    face:
+      groupId: his
+      region: ap-beijing

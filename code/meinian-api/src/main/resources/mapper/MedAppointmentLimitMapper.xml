@@ -18,4 +18,31 @@
         id,appointment_date,actual_limit,max_limit,actual_count,remark,
         create_time
     </sql>
+    <insert id="saveOrUpdateAppointmentLimit">
+        INSERT INTO med_appointment_limit
+        (appointment_date, actual_limit, max_limit, actual_count, remark, create_time)
+        VALUES
+            (#{appointmentDate}, #{actualLimit}, #{maxLimit}, 1, #{remark}, NOW())
+        ON DUPLICATE KEY UPDATE
+            actual_count = actual_count + 1
+    </insert>
+    <select id="selectAppointmentLimitLast60Days"
+            resultType="com.yuqin.meinian.api.front.VO.AppointmentLimitLast60DaysFrontVO">
+        select appointment_date as appointmentDate,
+               actual_limit     as actualLimit,
+               max_limit        as maxLimit,
+               actual_count     as actualCount
+        from med_appointment_limit
+        where appointment_date between #{startDate} and #{endDate}
+        order by appointmentDate;
+    </select>
+    <select id="selectByAppointmentDate" resultType="java.util.Map">
+        select appointment_date as appointmentDate,
+               actual_limit     as actualLimit,
+               max_limit        as maxLimit,
+               actual_count     as actualCount
+        from med_appointment_limit
+        where appointment_date = #{appointmentDate}
+        limit 1
+    </select>
 </mapper>

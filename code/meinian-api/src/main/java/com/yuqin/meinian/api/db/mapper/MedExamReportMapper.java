@@ -9,6 +9,7 @@ import com.yuqin.meinian.api.db.entity.PromotionRuleEntity;
 import com.yuqin.meinian.api.mis.VO.PackageWithRuleVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author YuQin
@@ -17,7 +18,7 @@ import java.util.List;
 * @Entity com.yuqin.meinian.api.db.entity.MedExamReportEntity
 */
 public interface MedExamReportMapper extends MPJBaseMapper<MedExamReportEntity> {
-
+    int insert(Map<String, Object> param);
 }
 
 

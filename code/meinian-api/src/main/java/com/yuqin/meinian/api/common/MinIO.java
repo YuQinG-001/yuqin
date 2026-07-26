@@ -1,5 +1,6 @@
 package com.yuqin.meinian.api.common;
 
+import cn.hutool.core.codec.Base64;
 import com.yuqin.meinian.api.exception.HisException;
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -186,5 +188,34 @@ public class MinIO {
         }
     }
 
+    public void uploadImage(String path, String base64Image) {
+        try {
+            // 移除Base64字符串中的Data URI前缀，保留纯Base64数据
+            base64Image = base64Image.replace("data:image/jpeg;base64,", "");
+            base64Image = base64Image.replace("data:image/png;base64,", "");
+
+            // 将Base64字符串解码为字节数组
+            byte[] decode = Base64.decode(base64Image);
+
+            // 将字节数组包装为输入流，供MinIO客户端读取
+            ByteArrayInputStream in = new ByteArrayInputStream(decode);
+
+            // 使用MinIO客户端上传对象到存储桶
+            this.client.putObject(PutObjectArgs.builder()
+                    .bucket(bucket)          // 指定存储桶名称
+                    .object(path)            // 指定对象存储路径
+                    .stream(in, -1, 5 * 1024 * 1024) // 设置输入流，-1表示未知流大小，5MB为分片大小
+                    .contentType("image/jpeg") // 设置内容类型为JPEG格式
+                    .build());
+
+            // 记录调试日志，确认文件保存成功
+            log.debug("向{}保存了文件", path);
+
+        } catch (Exception e) {
+            // 记录错误日志并抛出业务异常
+            log.error("保存文件失败", e);
+            throw new HisException("保存文件失败");
+        }
+    }
 }
 

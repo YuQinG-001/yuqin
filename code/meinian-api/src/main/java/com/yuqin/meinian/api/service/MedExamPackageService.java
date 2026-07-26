@@ -168,4 +168,13 @@ public interface MedExamPackageService extends MPJBaseService<MedExamPackageEnti
     IPage<MedExamPackagePageQueryVO> pageQueryByCondition(MedExamPackagePageQueryDTO dto);
 
     GoodsSnapshotEntity findPackageAndPromotionById(Integer id);
+
+    /**
+     * 当front端使用时，根据商品快照id和客户id获取商品信息
+     * 当mis端使用时，根据商品快照id获取商品信息
+     * @param snapshotId 商品快照id
+     * @param customerId 客户id
+     * @return 商品信息
+     */
+    GoodsSnapshotEntity findBySnapshotId(String snapshotId, Integer customerId);
 }

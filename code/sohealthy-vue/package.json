@@ -10,9 +10,12 @@
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.3.2",
+        "@tencentcloud/call-uikit-vue": "^4.0.12",
+        "@tencentcloud/chat-uikit-vue": "^3.0.2",
         "axios": "^1.14.0",
         "element-plus": "^2.13.6",
         "fast-glob": "^3.3.3",
+        "jspdf": "^4.2.1",
         "vue": "^3.5.13",
         "vue-native-websocket-vue3": "^3.1.8",
         "vue-router": "^5.0.4"
@@ -21,7 +24,9 @@
         "@vitejs/plugin-vue": "^5.2.3",
         "@vue/tsconfig": "^0.7.0",
         "less": "^4.6.4",
+        "sass": "^1.77.0",
         "sass-embedded": "^1.98.0",
+        "sass-loader": "^10.1.1",
         "typescript": "~5.8.3",
         "unplugin-auto-import": "^21.0.0",
         "unplugin-vue-components": "^32.0.0",

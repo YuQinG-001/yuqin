@@ -1,15 +1,21 @@
 package com.yuqin.meinian.api.mis.VO;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @Builder
 @Schema(description = "登录成功响应对象")
-public class LoginVO {
+public class LoginVO implements Serializable {
+    @Serial
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 
     @Schema(description = "登录结果（true-成功）")
     private Boolean result;

@@ -7,6 +7,8 @@ import com.yuqin.meinian.api.front.VO.CustomerLoginVO;
 import com.yuqin.meinian.api.front.VO.CustomerUserVO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 /**
  * @author YuQin
  * @description 针对表【crm_customer(客户信息表)】的数据库操作Service
@@ -22,4 +24,6 @@ public interface CrmCustomerService extends MPJBaseService<CrmCustomerEntity> {
     int modify(ModifyCustomerDTO dto);
 
     String upLoad(MultipartFile file);
+
+    CustomerUserVO findSummary(Integer customerId);
 }

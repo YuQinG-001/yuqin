@@ -47,6 +47,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -110,16 +111,30 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
     }
 
     @Override
+    @Transactional
+    public int syncPaymentResult(String[] outTradeNos) {
+        if (outTradeNos == null || outTradeNos.length == 0) {
+            throw new HisException("未填入订单流水号：outTradeNo");
+        }
+        int result = 0;
+        for (String outTradeNo : outTradeNos) {
+            String transactionId = paymentService.getPaymentResult(outTradeNo);
+            result += this.updatePayment(transactionId, outTradeNo);
+        }
+        return result;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updatePayment(String transactionId, String outTradeNo) {
+    public int updatePayment(String transactionId, String outTradeNo) {
         Wrapper<TradeOrderEntity> wrapper = Wrappers.<TradeOrderEntity>lambdaUpdate()
                 .set(TradeOrderEntity::getOutTradeNo, outTradeNo)
                 .set(TradeOrderEntity::getTransactionId, transactionId)
                 .set(TradeOrderEntity::getOrderStatus, 3)
                 .eq(TradeOrderEntity::getOutTradeNo, outTradeNo)
-                .eq(TradeOrderEntity::getOrderStatus, 1);
+                .in(TradeOrderEntity::getOrderStatus, 1, 2);
         TradeOrderEntity tOrder = new TradeOrderEntity();
-        return baseMapper.update(tOrder, wrapper) == 1;
+        return baseMapper.update(tOrder, wrapper);
     }
 
     @Override
@@ -179,7 +194,7 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
             return false;
         }
         int loginIdAsInt = StpCustomerUtil.getLoginIdAsInt();
-        TradeOrderEntity tradeOrderEntity =  baseMapper.selectTranIdAndAmountByOrderId(loginIdAsInt, orderId);
+        TradeOrderEntity tradeOrderEntity = baseMapper.selectTranIdAndAmountByOrderId(loginIdAsInt, orderId);
         String transactionId = tradeOrderEntity.getTransactionId();
         BigDecimal totalAmount = tradeOrderEntity.getTotalAmount();
         long cents = totalAmount.multiply(BigDecimal.valueOf(100))
@@ -217,13 +232,26 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
     }
 
     @Override
+    public int removeByIdForMis(Integer id) {
+        Wrapper<TradeOrderEntity> wrapper = Wrappers.lambdaQuery(TradeOrderEntity.class)
+                .eq(TradeOrderEntity::getOrderId, id)
+                .eq(TradeOrderEntity::getOrderStatus, 2);
+        return baseMapper.delete(wrapper);
+    }
+
+    @Override
+    public boolean hasOwnOrder(Map<String, Object> param) {
+        return tradeOrderMapper.hasOwnOrder(param) != null;
+    }
+
+    @Override
     public IPage<OrderPageQueryMisVO> pageQueryByCondition(OrderPageQueryMisDTO dto) {
         LocalDate startDate = dto.getStartDate();
         LocalDate endDate = dto.getEndDate();
         // 只有一个为空时，报错
         if ((startDate != null) ^ (endDate != null)) {
             throw new HisException("开始日期和结束日期必须同时填写");
-        } else if (endDate != null){
+        } else if (endDate != null) {
             if (startDate.isAfter(endDate)) {
                 throw new HisException("开始日期必须在结束日期之前");
             }
@@ -395,7 +423,7 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
                 .lt(TradeOrderEntity::getOrderStatus, 3);  //状态1表示未付款，状态2表示已关闭
         LambdaQueryWrapper<TradeOrderEntity> wrapper2 = Wrappers.lambdaQuery(TradeOrderEntity.class);
         wrapper2.eq(TradeOrderEntity::getCustomerId, customerId)
-                .eq(TradeOrderEntity::getCreateDate, LocalDateTime.now().toLocalDate()) //检查今天退款的订单
+                .eq(TradeOrderEntity::getRefundDate, LocalDateTime.now().toLocalDate()) //检查今天退款的订单
                 .eq(TradeOrderEntity::getOrderStatus, 4); //状态值为4表示已退款
         long l1 = baseMapper.selectCount(wrapper1);
         long l2 = baseMapper.selectCount(wrapper2);
@@ -434,7 +462,6 @@ public class TradeOrderServiceImpl extends MPJBaseServiceImpl<TradeOrderMapper, 
                 .set(TradeOrderEntity::getRefundDate, LocalDate.now())
                 .set(TradeOrderEntity::getRefundTime, LocalDateTime.now());
         return tradeOrderMapper.update(null, wrapper);
-
     }
 
     private int updateStatusByOutTradeNo(String outTradeNo) {

@@ -1,11 +1,15 @@
 package com.yuqin.meinian.api.serviceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.yuqin.meinian.api.db.entity.PromotionRuleEntity;
 import com.yuqin.meinian.api.db.mapper.PromotionRuleMapper;
 import com.yuqin.meinian.api.exception.HisException;
+import com.yuqin.meinian.api.mis.DTO.RulePageQueryDTO;
+import com.yuqin.meinian.api.mis.VO.PromotionRuleStatisticsVO;
 import com.yuqin.meinian.api.mis.VO.RuleVO;
 import com.yuqin.meinian.api.mis.converter.RuleConvertMapper;
 import com.yuqin.meinian.api.service.PromotionRuleService;
@@ -49,6 +53,12 @@ public class PromotionRuleServiceImpl extends MPJBaseServiceImpl<PromotionRuleMa
         }
         log.debug("成功查询规则 {} 条", voList.size());
         return voList;
+    }
+
+    @Override
+    public IPage<PromotionRuleStatisticsVO> pageQueryByCondition(RulePageQueryDTO dto) {
+        Page<PromotionRuleStatisticsVO> page = Page.of(dto.getPageNum(), dto.getPageSize());
+        return baseMapper.selectPageByQueryCondition(page, dto.getRuleName());
     }
 
 }

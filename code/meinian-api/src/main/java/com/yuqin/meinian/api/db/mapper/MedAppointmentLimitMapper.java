@@ -2,6 +2,11 @@ package com.yuqin.meinian.api.db.mapper;
 
 import com.yuqin.meinian.api.db.entity.MedAppointmentLimitEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yuqin.meinian.api.front.VO.AppointmentLimitLast60DaysFrontVO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author YuQin
@@ -10,7 +15,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.yuqin.meinian.api.db.entity.MedAppointmentLimitEntity
 */
 public interface MedAppointmentLimitMapper extends BaseMapper<MedAppointmentLimitEntity> {
+    List<AppointmentLimitLast60DaysFrontVO> selectAppointmentLimitLast60Days(Map<String, Object> param);
 
+    List<Map<String, Object>> selectByAppointmentDate(@Param("appointmentDate") String appointmentDate);
+
+    int saveOrUpdateAppointmentLimit(Map<String, Object> param);
 }
 
 

@@ -1,8 +1,11 @@
 package com.yuqin.meinian.api.db.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.yuqin.meinian.api.db.entity.PromotionRuleEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yuqin.meinian.api.mis.VO.PromotionRuleStatisticsVO;
 
 /**
 * @author YuQin
@@ -11,7 +14,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.yuqin.meinian.api.db.entity.PromotionRuleEntity
 */
 public interface PromotionRuleMapper extends MPJBaseMapper<PromotionRuleEntity> {
-
+    IPage<PromotionRuleStatisticsVO> selectPageByQueryCondition(Page<?> page, String ruleName);
 }
 
 

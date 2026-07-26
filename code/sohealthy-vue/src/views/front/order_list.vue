@@ -4,19 +4,19 @@
             <el-input
                 v-model="dataForm.keyword"
                 placeholder="套餐标题 / 订单编号"
-                size="medium"
+                size="default"
                 class="keyword"
                 maxlength="32"
-                clearable="clearable"
+                clearable
             />
         </el-form-item>
         <el-form-item>
-            <el-button size="medium" type="primary" :icon="Search" @click="searchHandle()"
+            <el-button size="default" type="primary" :icon="Search" @click="searchHandle()"
                 >查询</el-button
             >
         </el-form-item>
         <el-form-item class="mold">
-            <el-radio-group v-model="dataForm.statusLabel" size="medium" @change="searchHandle()">
+            <el-radio-group v-model="dataForm.statusLabel" size="default" @change="searchHandle()">
                 <el-radio-button label="全部"></el-radio-button>
                 <el-radio-button label="未付款"></el-radio-button>
                 <el-radio-button label="已付款"></el-radio-button>
@@ -72,9 +72,9 @@
                         取消订单
                     </el-button>
                     <el-button
-                        v-if="one.orderStatus == '已付款'"
+                        v-if="['已付款', '已预约'].includes(one.orderStatus)"
                         type="primary"
-                        :disabled="one.appointCount == one.quantity"
+                        :disabled="one.appointCount >= one.quantity"
                         @click="appointHandle(one.orderId, one.quantity, one.appointCount)"
                     >
                         预约体检
@@ -104,9 +104,100 @@
     <div class="empty" v-show="empty">
         <el-empty :image-size="200" />
     </div>
+    <el-dialog
+        title="体检预约"
+        :close-on-click-modal="false"
+        v-model="appointDialog.visible"
+        width="550px"
+    >
+        <el-form
+            :model="appointDialog.dataForm"
+            ref="dialogForm"
+            :rules="appointDialog.dataRule"
+            label-width="80px"
+        >
+            <fieldset class="appointment">
+                <legend>
+                    <h4>我的预约</h4>
+                </legend>
+                <el-form-item label="预约日期" prop="appointmentDate">
+                    <el-date-picker
+                        v-model="appointDialog.dataForm.appointmentDate"
+                        type="date"
+                        placeholder="选择日期"
+                        size="medium"
+                        :editable="false"
+                        format="YYYY-MM-DD"
+                        value-format="YYYY-MM-DD"
+                        :disabled-date="disabledDate"
+                    />
+                    <span class="desc">提示：不可预约今日</span>
+                </el-form-item>
+                <el-form-item label="体检人" prop="patientName">
+                    <el-input
+                        v-model="appointDialog.dataForm.patientName"
+                        size="medium"
+                        placeholder="输入姓名"
+                        maxlength="10"
+                        clearable
+                    />
+                </el-form-item>
+                <el-form-item label="身份证号" prop="idCardNo">
+                    <el-input
+                        v-model="appointDialog.dataForm.idCardNo"
+                        size="medium"
+                        placeholder="输入身份证号"
+                        maxlength="18"
+                        clearable
+                    />
+                </el-form-item>
+                <el-form-item label="电话号码" prop="phone">
+                    <el-input
+                        v-model="appointDialog.dataForm.phone"
+                        size="medium"
+                        placeholder="输入电话号码"
+                        maxlength="11"
+                        clearable
+                    />
+                </el-form-item>
+                <el-form-item label="邮寄地址" prop="address">
+                    <el-input
+                        v-model="appointDialog.dataForm.address"
+                        size="medium"
+                        placeholder="输入接收体检报告的邮寄地址"
+                        maxlength="100"
+                        clearable
+                    />
+                </el-form-item>
+                <el-form-item label="公司名称" prop="company">
+                    <el-input
+                        v-model="appointDialog.dataForm.company"
+                        size="medium"
+                        placeholder="输入公司名称"
+                        maxlength="100"
+                        clearable
+                    />
+                </el-form-item>
+            </fieldset>
+        </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button size="medium" @click="appointDialog.visible = false">取消</el-button>
+                <el-button type="primary" size="medium" @click="dataFormSubmit">确定</el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 <script lang="ts" setup>
-    import { reactive, ref, type Ref, getCurrentInstance, onMounted, useTemplateRef } from 'vue';
+    import {
+        reactive,
+        ref,
+        type Ref,
+        getCurrentInstance,
+        onMounted,
+        useTemplateRef,
+        nextTick,
+    } from 'vue';
     import { Search } from '@element-plus/icons-vue';
     import router from '../../router/index';
 
@@ -120,6 +211,33 @@
 
     let empty = ref(false);
 
+    interface OrderItemRaw {
+        /** 订单ID */
+        orderId: number;
+        /** 外部订单号 */
+        outTradeNo: string;
+        /** 创建时间 */
+        createTime: string;
+        /** 商品标题 */
+        goodsTitle: string;
+        /** 商品描述 */
+        goodsDescription: string;
+        /** 商品图片路径 */
+        goodsImage: string;
+        /** 商品单价 */
+        goodsPrice: number;
+        /** 购买数量 */
+        quantity: number;
+        /** 总金额 */
+        totalAmount: number;
+        /** 订单状态（数字） */
+        orderStatus: string;
+        /** 套餐快照ID */
+        snapshotId: number;
+        /** 已预约人数 */
+        appointCount: number;
+        disabled: boolean;
+    }
     const dataForm = reactive({
         keyword: '',
         statusLabel: '全部',
@@ -137,7 +255,7 @@
     });
 
     const data = reactive({
-        dataList: [],
+        dataList: [] as OrderItemRaw[],
         pageIndex: 1,
         pageSize: 10,
         totalCount: 0,
@@ -224,6 +342,114 @@
     onMounted(() => {
         loadPageData();
     });
+
+    const appointDialog = reactive({
+        visible: false,
+        dataForm: {
+            orderId: null,
+            appointmentDate: null,
+            patientName: null,
+            idCardNo: null,
+            phone: null,
+            address: null,
+            company: null,
+        },
+        dataRule: {
+            appointmentDate: [{ required: true, message: '日期不能为空' }],
+            patientName: [
+                { required: true, message: '姓名不能为空' },
+                { pattern: '^[\u4e00-\u9fa5]{2,10}$', message: '姓名格式错误' },
+            ],
+            idCardNo: [
+                { required: true, message: '身份证号不能为空' },
+                { pattern: '^[0-9Xx]{18}$', message: '身份证号格式错误' },
+            ],
+            phone: [
+                { required: true, message: '电话号码不能为空' },
+                { pattern: '^1[1-9]\\d{9}$', message: '电话号码格式错误' },
+            ],
+            address: [
+                { required: true, message: '邮寄地址不能为空' },
+                { pattern: '^[0-9A-Za-z\u4e00-\u9fa5\\-_#]{10,100}$', message: '邮寄地址格式错误' },
+            ],
+            company: [
+                {
+                    required: false,
+                    pattern: '^[0-9A-Za-z\u4e00-\u9fa5\\-_#]{2,100}$',
+                    message: '公司名称不正确',
+                },
+            ],
+        },
+    });
+
+    function disabledDate(date: any) {
+        //只能预约未来60天的体检
+        let bool = dayjs(date).isBetween(dayjs(), dayjs().add(61, 'day'));
+        return !bool;
+    }
+    const dialogFormRef = useTemplateRef('dialogForm');
+    async function appointHandle(orderId: number, quantity: number, appointCount: number) {
+        appointDialog.dataForm.orderId = orderId;
+        if (quantity == appointCount) {
+            ElMessage.warning('订单已经全部预约，无法再次预约');
+            return;
+        }
+        if (appointCount == 0) {
+            try {
+                await ElMessageBox.confirm('一但预约不支持退款，您确定预约吗？', '提示信息', {
+                    type: 'warning',
+                    cancelButtonText: '取消',
+                    confirmButtonText: '确定',
+                });
+            } catch (error) {
+                console.log('用户取消操作');
+                return;
+            }
+        }
+        appointDialog.visible = true;
+        await nextTick();
+        dialogFormRef.value?.clearValidate();
+        dialogFormRef.value?.resetFields();
+    }
+    async function dataFormSubmit() {
+        // 校验表单
+        let ok = await dialogFormRef.value?.validate();
+        if (!ok) {
+            return;
+        }
+        // 清除错误提示信息
+        dialogFormRef.value?.clearValidate();
+        // 表单项合法的情况下发送ajax post请求。
+        const sendData = {
+            orderId: appointDialog.dataForm.orderId,
+            appointmentDate: appointDialog.dataForm.appointmentDate,
+            patientName: appointDialog.dataForm.patientName,
+            idCardNo: appointDialog.dataForm.idCardNo,
+            phone: appointDialog.dataForm.phone,
+            address: appointDialog.dataForm.address,
+            company: appointDialog.dataForm.company,
+        };
+        const result = await request.post('/front/appointment/appoint', sendData);
+        if (result) {
+            if (result == '预约成功') {
+                ElMessage({
+                    type: 'success',
+                    message: '预约成功',
+                    duration: 1200,
+                });
+                // 预约成功了，隐藏弹窗，并且重新加载分页数据。
+                appointDialog.visible = false;
+                loadPageData();
+            } else {
+                // 预约失败
+                ElMessage({
+                    type: 'error',
+                    message: result,
+                    duration: 1200,
+                });
+            }
+        }
+    }
 </script>
 <style lang="less" scoped>
     @import url(order_list.less);

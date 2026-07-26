@@ -76,6 +76,42 @@ export default [
                     isTab: true,
                 },
             },
+            {
+                path: 'customer_im',
+                name: 'MisCustomerIm',
+                component: () => import('../views/mis/customer_im.vue'),
+                meta: {
+                    title: '客服IM',
+                    isTab: true,
+                },
+            },
+            {
+                path: 'appointment',
+                name: 'MisAppointment',
+                component: () => import('../views/mis/appointment.vue'),
+                meta: {
+                    title: '体检预约',
+                    isTab: true,
+                },
+            },
+            {
+                path: 'customer_checkin',
+                name: 'MisCustomerCheckin',
+                component: () => import('../views/mis/customer_checkin.vue'),
+                meta: {
+                    title: '体检签到',
+                    isTab: true,
+                },
+            },
+            {
+                path: 'doctor_checkup',
+                name: 'MisDoctorCheckup',
+                component: () => import('../views/mis/doctor_checkup.vue'),
+                meta: {
+                    title: '医生检查',
+                    isTab: true,
+                },
+            },
         ],
     },
 ];

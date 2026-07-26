@@ -41,8 +41,7 @@ router.beforeEach((to, _from) => {
         }
     } else if (
         // 业务端：业务端是客户详情页或者是查看客户商品快照，那就需要登录了。
-        fullPath.startsWith('/front/customer') ||
-        fullPath.startsWith('/front/goods_snapshot')
+        fullPath.startsWith('/front/customer') // ||  fullPath.startsWith('/front/goods_snapshot')
     ) {
         if (!token) {
             return { name: 'FrontIndex' };

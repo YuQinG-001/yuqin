@@ -20,4 +20,10 @@
         id,appointment_id,report_id,status,file_url,express_no,
         express_date,exam_date,create_time
     </sql>
+    <insert id="insert">
+        insert into med_exam_report
+            (appointment_id, report_id, status, exam_date, create_time)
+        values ((select id from med_exam_appointment where appointment_no = #{appointmentNo}), #{reportId}, 1,
+                current_date, now())
+    </insert>
 </mapper>

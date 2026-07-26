@@ -5,20 +5,20 @@
 <mapper namespace="com.yuqin.meinian.api.db.mapper.MedExamAppointmentMapper">
 
     <resultMap id="BaseResultMap" type="com.yuqin.meinian.api.db.entity.MedExamAppointmentEntity">
-            <id property="id" column="id" />
-            <result property="appointmentNo" column="appointment_no" />
-            <result property="orderId" column="order_id" />
-            <result property="appointmentDate" column="appointment_date" />
-            <result property="patientName" column="patient_name" />
-            <result property="gender" column="gender" />
-            <result property="idCardNo" column="id_card_no" />
-            <result property="birthDate" column="birth_date" />
-            <result property="phone" column="phone" />
-            <result property="address" column="address" />
-            <result property="company" column="company" />
-            <result property="status" column="status" />
-            <result property="checkinTime" column="checkin_time" />
-            <result property="createTime" column="create_time" />
+        <id property="id" column="id"/>
+        <result property="appointmentNo" column="appointment_no"/>
+        <result property="orderId" column="order_id"/>
+        <result property="appointmentDate" column="appointment_date"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="gender" column="gender"/>
+        <result property="idCardNo" column="id_card_no"/>
+        <result property="birthDate" column="birth_date"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="company" column="company"/>
+        <result property="status" column="status"/>
+        <result property="checkinTime" column="checkin_time"/>
+        <result property="createTime" column="create_time"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -26,4 +26,94 @@
         id_card_no,birth_date,phone,address,company,
         status,checkin_time,create_time
     </sql>
+    <update id="updateForCheckin">
+        UPDATE med_exam_appointment
+        SET `status`     = 2,
+            checkin_time = NOW()
+        WHERE appointment_date = CURRENT_DATE()
+          AND `status` = 1
+          AND id_card_no = #{dto.idCardNo}
+    </update>
+    <update id="updateStatusByAppointmentNo">
+        update med_exam_appointment
+        set status = #{status}
+        where appointment_no = #{appointmentNo}
+          and status != 3
+    </update>
+    <select id="selectByOrderId" resultType="com.yuqin.meinian.api.mis.VO.MedExamAppointmentMisVO">
+        select patient_name                           as patientName,
+               gender,
+               phone,
+               appointment_date                       as appointmentDate,
+               status,
+               timestampdiff(YEAR, birth_date, now()) as age
+        from med_exam_appointment
+        where order_id = #{orderId}
+    </select>
+    <select id="selectPageForMis" parameterType="Map" resultType="com.yuqin.meinian.api.mis.VO.MedExamAppointmentMisVO">
+        SELECT a.id,
+        a.patient_name as patientName,
+        a.gender,
+        CONCAT(SUBSTRING(a.phone,1,3),"****",SUBSTRING(a.phone,8,4)) AS phone,
+        CONCAT(SUBSTRING(a.id_card_no,1,3),"***********",SUBSTRING(a.id_card_no,15,4)) AS idCardNo,
+        TIMESTAMPDIFF(YEAR,a.birth_date,NOW()) AS age,
+        a.company,
+        a.status,
+        o.goods_title AS goodsTitle,
+        o.snapshot_id AS snapshotId
+        FROM med_exam_appointment a
+        JOIN trade_order o ON a.order_id = o.order_id
+        <where>
+            <if test="appointmentDate != null and appointmentDate != ''">
+                AND a.appointment_date = #{appointmentDate}
+            </if>
+            <if test="patientName != null and patientName != ''">
+                AND a.patient_name LIKE CONCAT("%",#{patientName},"%")
+            </if>
+            <if test="phone != null and phone != ''">
+                AND a.phone = #{phone}
+            </if>
+            <if test="status != null">
+                AND a.status = #{status}
+            </if>
+        </where>
+        ORDER BY a.id DESC
+    </select>
+    <select id="selectAppointInToday" resultType="java.util.Map">
+        select id, status
+        from med_exam_appointment
+        where id_card_no = #{idCardNo}
+          and patient_name = #{patientName}
+          and gender = #{gender}
+          and appointment_date = CURRENT_DATE
+        limit 1
+    </select>
+    <!-- 找出这个体检人（身份证号）对应的预约流水号和商品快照id：后面业务要使用。打印导引单上肯定要有预约流水号-->
+    <select id="selectAppointNoAndSnapshotId" resultType="java.util.Map">
+        SELECT a.appointment_no as appointmentNo,
+               o.snapshot_id    AS snapshotId
+        FROM med_exam_appointment a
+                 JOIN
+             trade_order o
+             ON
+                 a.order_id = o.order_id
+        WHERE a.appointment_date = CURRENT_DATE()
+          AND a.id_card_no = #{dto.idCardNo}
+    </select>
+    <select id="selectSummaryById" resultType="java.util.Map">
+        SELECT a.appointment_no as appointmentNo,
+               a.order_id  AS orderId,
+               o.snapshot_id AS snapshotId,
+               a.patient_name as patientName,
+               a.gender,
+               TIMESTAMPDIFF(YEAR,a.birth_date, NOW()) AS age,
+               a.id_card_no as idCardNo,
+               a.phone,
+               a.appointment_date as appointmentDate,
+               a.company
+        FROM med_exam_appointment a
+                 JOIN trade_order o ON a.order_id = o.order_id
+        WHERE a.id = #{id}
+    </select>
+
 </mapper>

@@ -97,7 +97,7 @@ public class TradeOrderFrontController {
             // 4. 处理支付成功订单：只有当交易状态为"SUCCESS"时才更新订单
             if ("SUCCESS".equals(tradeState)) {
                 // 调用服务层方法更新订单支付状态
-                boolean success = tradeOrderService.updatePayment(transactionId, outTradeNo);
+                boolean success = tradeOrderService.updatePayment(transactionId, outTradeNo) == 1;
                 log.info("订单更新{}: {}", success ? "成功" : "失败", outTradeNo);  // 记录订单更新结果
                 if (success) {
                     tradeOrderService.clearRedisPayment(outTradeNo);

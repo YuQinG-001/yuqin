@@ -5,6 +5,8 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yuqin.meinian.api.common.R;
+import com.yuqin.meinian.api.db.entity.GoodsSnapshotEntity;
+import com.yuqin.meinian.api.front.DTO.FindGoodsBySnapshotIdDTO;
 import com.yuqin.meinian.api.mis.DTO.*;
 import com.yuqin.meinian.api.mis.VO.ExamPackageDetailVO;
 import com.yuqin.meinian.api.mis.VO.PackageWithRuleVO;
@@ -32,7 +34,7 @@ import java.util.List;
 @RequestMapping("/mis/goods")
 @RequiredArgsConstructor
 public class PackageController {
-    private final MedExamPackageService       medExamPackageService;
+    private final MedExamPackageService medExamPackageService;
     private final MedExamPackageConvertMapper medExamPackageConvertMapper;
 
     @PostMapping("/page")
@@ -129,5 +131,11 @@ public class PackageController {
             return R.ok("成功删除 " + i + " 条数据");
         }
         return R.ok("未找到符合条件的记录，已过滤或已删除");
+    }
+    @PostMapping("/findSnapshot")
+    @SaCheckLogin
+    public R<GoodsSnapshotEntity> findGoodsBySnapshotId(@RequestBody @Valid FindGoodsBySnapshotIdDTO dto) {
+        GoodsSnapshotEntity bySnapshotId = medExamPackageService.findBySnapshotId(dto.getSnapshotId(), null);
+        return R.ok(bySnapshotId);
     }
 }

@@ -14,4 +14,24 @@
     <sql id="Base_Column_List">
         rule_id,rule_name,rule_content,remark
     </sql>
+    <select id="selectPageByQueryCondition"
+            resultType="com.yuqin.meinian.api.mis.VO.PromotionRuleStatisticsVO">
+        select
+        r.rule_id as ruleId,count(p.id) as count,r.rule_name as ruleName,r.remark
+        from
+        promotion_rule r
+        left join
+        med_exam_package p
+        on
+        r.rule_id = p.promotion_id
+        <where>
+            <if test="ruleName != null and ruleName != ''">
+                and r.rule_name like concat('%', #{ruleName}, '%')
+            </if>
+        </where>
+        group by
+        r.rule_id
+        order by
+        r.rule_id
+    </select>
 </mapper>

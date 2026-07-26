@@ -1,11 +1,16 @@
 package com.yuqin.meinian.api.db.mongo;
 
+import com.yuqin.meinian.api.db.entity.CheckupItem;
 import com.yuqin.meinian.api.db.entity.GoodsSnapshotEntity;
 import jakarta.annotation.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class GoodsSnapshotDao {
@@ -34,5 +39,38 @@ public class GoodsSnapshotDao {
         // 使用save方法：当entity的_id为null时执行插入，否则执行更新
         // 返回保存后的实体，并获取其主键_id
         return mongoTemplate.save(entity).get_id();
+    }
+
+    /**
+     * 根据商品快照id获取商品的快照信息
+     *
+     * @param snapshotId 商品快照id(_id)
+     * @return 商品快照的信息
+     */
+    public GoodsSnapshotEntity findById(String snapshotId) {
+        return mongoTemplate.findById(snapshotId, GoodsSnapshotEntity.class);
+    }
+
+    /**
+     * 查询适合指定性别的体检项目列表
+     *
+     * @param id  体检项目快照记录的ID
+     * @param sex 体检人的性别（"男" 或 "女"）
+     * @return 适合该性别的体检项目列表
+     */
+    public List<CheckupItem> searchCheckup(String id, String sex) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("_id").is(id)),
+                Aggregation.unwind("$examItems"),  // 或 $checkup
+                Aggregation.match(Criteria.where("examItems.sex").in("无", sex)),
+                // ★ 新增一行：把展开后的子文档提到根，直接返回项目本身
+                Aggregation.replaceRoot("$examItems")
+        );
+
+        AggregationResults<CheckupItem> results = mongoTemplate.aggregate(
+                aggregation, "goods_snapshot", CheckupItem.class
+        );
+
+        return results.getMappedResults(); // 直接就是 List<CheckupItem>
     }
 }

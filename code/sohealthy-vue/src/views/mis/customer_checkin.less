@@ -1,0 +1,58 @@
+@import url('../style.less');
+.mold {
+    float: right;
+    margin-right: 0 !important;
+}
+.card-info {
+    display: flex;
+    .left {
+        width: 330px;
+    }
+    .right {
+        margin-left: 20px;
+        .empty {
+            background-color: @bg-color-1;
+            width: 105px;
+            height: 130px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .icon {
+                color: @bg-color-3;
+            }
+        }
+        .photo {
+            width: 105px;
+            height: 130px;
+        }
+    }
+}
+
+.photo-container {
+    .empty {
+        width: 460px;
+        height: 345px;
+        .camera {
+            width: 130px;
+            height: 130px;
+            margin-top: 30px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+        ol {
+            margin: 20px 0 0 0;
+            padding: 0 20px;
+            li {
+                line-height: 1.7;
+                color: @font-color-2;
+                margin-bottom: 10px;
+            }
+        }
+    }
+    #video,
+    #photo {
+        width: 460px;
+        height: 345px;
+    }
+}

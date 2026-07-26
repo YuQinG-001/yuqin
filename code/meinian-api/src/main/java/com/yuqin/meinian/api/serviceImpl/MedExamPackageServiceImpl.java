@@ -26,6 +26,7 @@ import com.yuqin.meinian.api.db.entity.GoodsSnapshotEntity;
 import com.yuqin.meinian.api.db.entity.MedExamPackageEntity;
 import com.yuqin.meinian.api.db.entity.PromotionRuleEntity;
 import com.yuqin.meinian.api.db.mapper.MedExamPackageMapper;
+import com.yuqin.meinian.api.db.mongo.GoodsSnapshotDao;
 import com.yuqin.meinian.api.exception.HisException;
 import com.yuqin.meinian.api.front.DTO.MedExamPackagePageQueryDTO;
 import com.yuqin.meinian.api.front.VO.ExamPackageDetailForFrontVO;
@@ -74,6 +75,7 @@ public class MedExamPackageServiceImpl extends MPJBaseServiceImpl<MedExamPackage
     private final MedExamPackageMapper medExamPackageMapper;
 
     private final MedExamPackageConvertMapper medExamPackageConvertMapper;
+    private final GoodsSnapshotDao goodsSnapshotDao;
 
     public IPage<PackageWithRuleVO> queryPackageWithRulePage(QueryPackagePageDTO dto) {
         IPage<PackageWithRuleVO> packagePageWithRule = getPackagePageWithRule(dto);
@@ -132,7 +134,7 @@ public class MedExamPackageServiceImpl extends MPJBaseServiceImpl<MedExamPackage
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String upLoad(MultipartFile file) {
-//        randomUUID存在"-",使用simpleUUID
+        //        randomUUID存在"-",使用simpleUUID
         String filename = IdUtil.simpleUUID() + ".jpg";
         String path = "/front/goods/img/" + filename;
         minIO.uploadImage(path, file);
@@ -402,8 +404,14 @@ public class MedExamPackageServiceImpl extends MPJBaseServiceImpl<MedExamPackage
         return baseMapper.selectJoinOne(GoodsSnapshotEntity.class, wrapper);
 
     }
+
+    @Override
+    public GoodsSnapshotEntity findBySnapshotId(String snapshotId, Integer customerId) {
+        // TODO 业务端用户在使用这个功能的时候，必须提供一个customerId，因为系统要保证当前客户只能看自己的商品快照，
+        //  不能说客户只要有一个快照id就可以随便看别人的商品快照。判断逻辑是只要该客户拥有该快照id就可以查看，后面实现,
+        //  mis端的用户不需要限制，如果mis端调用该方法，则customerId提供一个null即可。
+        if (customerId != null) {
+        }
+        return goodsSnapshotDao.findById(snapshotId);
+    }
 }
-
-
-
-

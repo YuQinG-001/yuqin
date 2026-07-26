@@ -4,9 +4,13 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -35,6 +39,7 @@ public class MedExamAppointmentEntity implements Serializable {
     /**
      * 预约日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private LocalDate appointmentDate;
 
     /**
@@ -87,6 +92,7 @@ public class MedExamAppointmentEntity implements Serializable {
      */
     private LocalDateTime createTime;
 
+    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
@@ -141,26 +147,24 @@ public class MedExamAppointmentEntity implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", appointmentNo=").append(appointmentNo);
-        sb.append(", orderId=").append(orderId);
-        sb.append(", appointmentDate=").append(appointmentDate);
-        sb.append(", patientName=").append(patientName);
-        sb.append(", gender=").append(gender);
-        sb.append(", idCardNo=").append(idCardNo);
-        sb.append(", birthDate=").append(birthDate);
-        sb.append(", phone=").append(phone);
-        sb.append(", address=").append(address);
-        sb.append(", company=").append(company);
-        sb.append(", status=").append(status);
-        sb.append(", checkinTime=").append(checkinTime);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        return getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", id=" + id +
+                ", appointmentNo=" + appointmentNo +
+                ", orderId=" + orderId +
+                ", appointmentDate=" + appointmentDate +
+                ", patientName=" + patientName +
+                ", gender=" + gender +
+                ", idCardNo=" + idCardNo +
+                ", birthDate=" + birthDate +
+                ", phone=" + phone +
+                ", address=" + address +
+                ", company=" + company +
+                ", status=" + status +
+                ", checkinTime=" + checkinTime +
+                ", createTime=" + createTime +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
     }
 }

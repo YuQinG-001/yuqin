@@ -11,6 +11,8 @@ import com.yuqin.meinian.api.front.VO.TradeOrderPageFrontVO;
 import com.yuqin.meinian.api.mis.DTO.OrderPageQueryMisDTO;
 import com.yuqin.meinian.api.mis.VO.OrderPageQueryMisVO;
 
+import java.util.Map;
+
 /**
  * @author YuQin
  * @description 针对表【trade_order(交易订单表)】的数据库操作Service
@@ -32,10 +34,16 @@ public interface TradeOrderService extends MPJBaseService<TradeOrderEntity> {
      *
      * @param transactionId 微信支付订单号（交易流水号）
      * @param outTradeNo    商户订单号
-     * @return true-更新成功，false-更新失败
+     * @return 更新数量
      */
-    boolean updatePayment(String transactionId, String outTradeNo);
+    int updatePayment(String transactionId, String outTradeNo);
 
+    /**
+     * 根据交易流水号，同步付款结果
+     * @param outTradeNos 要同步的订单的交易流水号
+     * @return 同步的订单数量
+     */
+    int syncPaymentResult(String[] outTradeNos);
     /**
      * 清除Redis中缓存的支付二维码
      *
@@ -99,4 +107,7 @@ public interface TradeOrderService extends MPJBaseService<TradeOrderEntity> {
 
     IPage<OrderPageQueryMisVO> pageQueryByCondition(OrderPageQueryMisDTO dto);
 
+    int removeByIdForMis(Integer id);
+
+    boolean hasOwnOrder(Map<String, Object> param);
 }

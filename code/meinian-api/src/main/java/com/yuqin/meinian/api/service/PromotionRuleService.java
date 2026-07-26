@@ -1,7 +1,10 @@
 package com.yuqin.meinian.api.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.yulichang.base.MPJBaseService;
 import com.yuqin.meinian.api.db.entity.PromotionRuleEntity;
+import com.yuqin.meinian.api.mis.DTO.RulePageQueryDTO;
+import com.yuqin.meinian.api.mis.VO.PromotionRuleStatisticsVO;
 import com.yuqin.meinian.api.mis.VO.RuleVO;
 
 import java.util.List;
@@ -13,4 +16,5 @@ import java.util.List;
  */
 public interface PromotionRuleService extends MPJBaseService<PromotionRuleEntity> {
     List<RuleVO> queryAllRule();
+    IPage<PromotionRuleStatisticsVO> pageQueryByCondition(RulePageQueryDTO dto);
 }

@@ -147,7 +147,7 @@
         <dependency>
             <groupId>com.tencentcloudapi</groupId>
             <artifactId>tencentcloud-sdk-java</artifactId>
-            <version>3.1.1434</version>
+            <version>4.0.11</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -257,7 +257,8 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk18on</artifactId>
-            <version>1.78.1</version>
+            <version>1.84</version>
+<!--            <version>1.78.1</version>-->
         </dependency>
 
         <!-- 华为云 -->

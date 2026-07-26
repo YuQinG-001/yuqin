@@ -65,43 +65,46 @@
     });
 
     async function login() {
-        let username = loginInfo.username;
-        let password = loginInfo.password;
-        let error = null;
-        if (stringIsEmpty(username)) error = '用户名不能为空';
-        else if (!isUsername(username)) error = '用户名格式错误';
-        else if (!isPassword(password)) error = '密码格式错误';
-        if (error) {
-            ElMessage({ type: 'error', message: error, duration: 1200 });
-            return;
+        try {
+            const username = loginInfo.username;
+            const password = loginInfo.password;
+            let error = '';
+            if (stringIsEmpty(username)) error = '用户名不能为空';
+            else if (!isUsername(username)) error = '用户名格式错误';
+            else if (!isPassword(password)) error = '密码格式错误';
+            if (error) {
+                ElMessage({ type: 'error', message: error, duration: 1200 });
+                return;
+            }
+            const loginData = {
+                username,
+                password,
+            };
+            // 配置
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+            const response = await axios.post('/meinian-api/mis/user/login', loginData, config);
+            //登入失败，没有返回response
+            if (!(response.data.code === 200)) {
+                ElMessage({ type: 'error', message: '登入失败', duration: 1200 });
+                return;
+            }
+            localStorage.setItem('token', response.data.result.token);
+            localStorage.setItem('permissions', JSON.stringify(response.data.result.permissions));
+            /* //登入后重定向
+            const redirect = route.query.redirect;
+            if (redirect && typeof redirect === 'string' && redirect !== '/mis/login') {
+                router.push(redirect);
+                return;
+            } */
+            router.push({ name: 'MisHome' });
+        } catch (error) {
+            console.error('登录失败:', error);
+            ElMessage({ type: 'error', message: '登录失败，请稍后再试', duration: 1200 });
         }
-        const loginData = {
-            username,
-            password,
-        };
-        // 配置
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-        const response = await axios.post('/meinian-api/mis/user/login', loginData, config);
-        //登入失败，没有返回response
-        // console.log("🚀 ~ login ~ response.data:", response.data)
-        if (!(response.data.code === 200)) {
-            ElMessage({ type: 'error', message: '登入失败', duration: 1200 });
-            return;
-        }
-        localStorage.setItem('token', response.data.result.token);
-        localStorage.setItem('permissions', JSON.stringify(response.data.result.permissions));
-
-        /* //登入后重定向
-        const redirect = route.query.redirect;
-        if (redirect && typeof redirect === 'string' && redirect !== '/mis/login') {
-            router.push(redirect);
-            return;
-        } */
-        router.push({ name: 'MisHome' });
     }
 </script>
 

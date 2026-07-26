@@ -15,8 +15,8 @@ public class BasePageDTO {
     @Min(value = 1, message = "pageNum不能小于1")
     private Integer pageNum = 1;
 
-    @Schema(description = "每页条数（10~50），默认10", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "每页条数（5~50），默认10", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "pageSize不能为空")
-    @Range(min = 10, max = 50, message = "pageSize必须在10~50之间")
+    @Range(min = 5, max = 50, message = "pageSize必须在5~50之间")
     private Integer pageSize = 10;
 }
